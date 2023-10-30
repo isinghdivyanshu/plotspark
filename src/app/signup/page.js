@@ -1,9 +1,9 @@
 import Link from "next/link";
 
-export default function Login() {
+export default function Signup() {
 	return (
 		<div className="min-h-screen bg-gradient-to-r from-[#FFEFD7] to-[#FFD7C8] pt-28 pl-28">
-			<div className="flex gap-6 ">
+			<div className="flex gap-16">
 				<div className="w-1/3 ">
 					<div className="text-[#0C1F5F91] font-normal">
 						Hey there, Welcome
@@ -69,6 +69,12 @@ export default function Login() {
 						</span>
 						<span>Log in</span>
 					</Link>
+				</div>
+				<div className="grow min-h-full rounded-s-lg border border-black border-r-0 overflow-hidden ml-16 shadow-lg shadow-[#0000006b]">
+					<div className="bg-[#dfdce8] py-2 px-10 font-bold text-2xl">
+						Timeline
+					</div>
+					<div className="h-full bg-white"></div>
 				</div>
 			</div>
 		</div>

@@ -8,6 +8,11 @@ export default function Home() {
 					Sign Up
 				</div>
 			</Link>
+			<Link href="/login">
+				<div className="hover:bg-blue-500 border border-blue-500 p-2 rounded-md">
+					Login
+				</div>
+			</Link>
 		</main>
 	);
 }

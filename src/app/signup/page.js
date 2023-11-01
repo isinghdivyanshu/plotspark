@@ -34,14 +34,14 @@ export default function Signup() {
 					<div className="flex gap-2 mb-5 justify-around">
 						<button
 							type="button"
-							className="rounded-lg bg-white py-2 px-4 flex items-center gap-2 justify-center"
+							className="rounded-xl bg-white py-2 px-4 flex items-center gap-2 justify-center"
 						>
 							<GoogleIcon />
 							Sign in with Google
 						</button>
 						<button
 							type="button"
-							className="rounded-lg bg-white py-2 px-4 flex items-center gap-2 justify-center"
+							className="rounded-xl bg-white py-2 px-4 flex items-center gap-2 justify-center"
 						>
 							<AppleIcon />
 							Sign in with Apple
@@ -63,7 +63,7 @@ export default function Signup() {
 								onChange={handleChange}
 								placeholder="Type Here"
 								autoComplete="name"
-								className="rounded-lg p-2 mb-3"
+								className="rounded-xl p-2 mb-3"
 								required
 							/>
 						</label>
@@ -77,7 +77,7 @@ export default function Signup() {
 								onChange={handleChange}
 								placeholder="Type Here"
 								autoComplete="email"
-								className="rounded-lg p-2 mb-3"
+								className="rounded-xl p-2 mb-3"
 								required
 							/>
 						</label>
@@ -96,7 +96,7 @@ export default function Signup() {
 									minLength={8}
 									placeholder="Type Here"
 									autoComplete="new-password"
-									className="rounded-lg p-2 mb-8 w-full"
+									className="rounded-xl p-2 mb-8 w-full"
 									required
 								/>
 								{!showPassword ? (
@@ -114,7 +114,7 @@ export default function Signup() {
 						</label>
 						<button
 							type="submit"
-							className="w-full bg-[#0c1f5f] p-2 rounded-lg text-white mb-16"
+							className="w-full bg-[#0c1f5f] p-2 rounded-xl text-white mb-16"
 						>
 							Sign Up
 						</button>
@@ -126,7 +126,7 @@ export default function Signup() {
 						<span>Log in</span>
 					</Link>
 				</div>
-				<div className="grow min-h-full rounded-s-lg border border-black border-r-0 overflow-hidden ml-16 shadow-lg shadow-[#0000006b]">
+				<div className="grow min-h-full rounded-s-xl border border-black border-r-0 overflow-hidden ml-16 shadow-lg shadow-[#0000006b]">
 					<div className="bg-[#dfdce8] py-2 px-10 font-bold text-2xl">
 						Timeline
 					</div>

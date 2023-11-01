@@ -29,14 +29,14 @@ export default function Login() {
 					<div className="flex gap-2 mb-5 justify-around">
 						<button
 							type="button"
-							className="rounded-lg bg-white py-2 px-4 flex items-center gap-2 justify-center"
+							className="rounded-xl bg-white py-2 px-4 flex items-center gap-2 justify-center"
 						>
 							<GoogleIcon />
 							Log in with Google
 						</button>
 						<button
 							type="button"
-							className="rounded-lg bg-white py-2 px-4 flex items-center gap-2 justify-center"
+							className="rounded-xl bg-white py-2 px-4 flex items-center gap-2 justify-center"
 						>
 							<AppleIcon />
 							Log in with Apple
@@ -61,7 +61,7 @@ export default function Login() {
 								onChange={handleChange}
 								placeholder="Type Here"
 								autoComplete="name"
-								className="rounded-lg p-2 mb-6"
+								className="rounded-xl p-2 mb-6"
 								required
 							/>
 						</label>
@@ -80,7 +80,7 @@ export default function Login() {
 									minLength={8}
 									placeholder="Type Here"
 									autoComplete="current-password"
-									className="rounded-lg p-2 mb-16 w-full"
+									className="rounded-xl p-2 mb-16 w-full"
 									required
 								/>
 								{!showPassword ? (
@@ -98,7 +98,7 @@ export default function Login() {
 						</label>
 						<button
 							type="submit"
-							className="w-full bg-[#0c1f5f] p-2 rounded-lg text-white mb-16"
+							className="w-full bg-[#0c1f5f] p-2 rounded-xl text-white mb-16"
 						>
 							Log In
 						</button>
@@ -110,7 +110,7 @@ export default function Login() {
 						<span>Sign up</span>
 					</Link>
 				</div>
-				<div className="grow min-h-full rounded-s-lg border border-black border-r-0 overflow-hidden ml-16 shadow-lg shadow-[#0000006b]">
+				<div className="grow min-h-full rounded-s-xl border border-black border-r-0 overflow-hidden ml-16 shadow-lg shadow-[#0000006b]">
 					<div className="bg-[#dfdce8] py-2 px-10 font-bold text-2xl">
 						Timeline
 					</div>

@@ -11,32 +11,33 @@ export default function Login() {
 	const [formData, setFormData] = useState({ name: "", password: "" });
 	const [showPassword, setShowPassword] = useState(false);
 	const hrStyle = {
-		backgroundColor: "#7979794d",
+		backgroundColor:
+			localStorage.getItem("theme") === "dark" ? "#d1d1d1" : "#7979794d",
 		height: "1px",
 		border: "none",
 	};
 
 	return (
-		<div className="min-h-screen bg-gradient-to-r from-[#FFEFD7] to-[#FFD7C8] pt-28 pl-28 dark:bg-black">
+		<div className="min-h-screen bg-gradient-to-r from-[#FFEFD7] to-[#FFD7C8] pt-28 pl-28 dark:bg-none dark:bg-black dark:text-white">
 			<div className="flex gap-16">
 				<div className="w-1/3 ">
-					<div className="text-[#0C1F5F91] font-normal">
+					<div className="text-[#0C1F5F91] font-normal dark:text-[#a0b3f3]">
 						Hey there,
 					</div>
-					<div className="font-black text-4xl mb-10">
+					<div className="font-black text-4xl mb-10 ">
 						Welcome Back
 					</div>
 					<div className="flex gap-2 mb-5 justify-around">
 						<button
 							type="button"
-							className="rounded-xl bg-white py-2 px-4 flex items-center gap-2 justify-center"
+							className="rounded-xl bg-white py-2 px-4 flex items-center gap-2 justify-center dark:text-black"
 						>
 							<GoogleIcon />
 							Log in with Google
 						</button>
 						<button
 							type="button"
-							className="rounded-xl bg-white py-2 px-4 flex items-center gap-2 justify-center"
+							className="rounded-xl bg-white py-2 px-4 flex items-center gap-2 justify-center dark:text-black"
 						>
 							<AppleIcon />
 							Log in with Apple
@@ -44,13 +45,15 @@ export default function Login() {
 					</div>
 					<div className="flex items-center justify-end">
 						<hr className="w-full inline-block" style={hrStyle} />
-						<span className=" text-[#797979d4] mx-2">or</span>
+						<span className=" text-[#797979d4] mx-2 dark:text-[#d1d1d1]">
+							or
+						</span>
 						<hr className="w-full inline-block" style={hrStyle} />
 					</div>
 					<form onSubmit={handleSubmit}>
 						<label
 							htmlFor="name"
-							className="flex flex-col gap-2 mt-8"
+							className="flex flex-col gap-2 mt-8 "
 						>
 							Name
 							<input
@@ -61,7 +64,7 @@ export default function Login() {
 								onChange={handleChange}
 								placeholder="Type Here"
 								autoComplete="name"
-								className="rounded-xl p-2 mb-6"
+								className="rounded-xl p-2 mb-6 dark:text-black"
 								required
 							/>
 						</label>
@@ -80,41 +83,41 @@ export default function Login() {
 									minLength={8}
 									placeholder="Type Here"
 									autoComplete="current-password"
-									className="rounded-xl p-2 mb-14 w-full"
+									className="rounded-xl p-2 mb-14 w-full dark:text-black"
 									required
 								/>
 								{!showPassword ? (
 									<VisibilityIcon
 										onClick={handlePassword}
-										className="absolute cursor-pointer right-2 top-2"
+										className="absolute cursor-pointer right-2 top-2 dark:text-black"
 									/>
 								) : (
 									<VisibilityOffIcon
 										onClick={handlePassword}
-										className="absolute cursor-pointer right-2 top-2"
+										className="absolute cursor-pointer right-2 top-2 dark:text-black"
 									/>
 								)}
 							</div>
 						</label>
 						<button
 							type="submit"
-							className="w-full bg-[#0c1f5f] p-2 rounded-xl text-white mb-16 font-bold"
+							className="w-full bg-[#0c1f5f] p-2 rounded-xl text-white mb-16 font-bold dark:bg-[#a0b3f3]"
 						>
 							Log In
 						</button>
 					</form>
 					<Link href="/signup">
-						<span className="text-[#5f6180b8]">
+						<span className="text-[#5f6180b8] dark:text-[#a0b3f3]">
 							First time here?{" "}
 						</span>
 						<span>Sign up</span>
 					</Link>
 				</div>
-				<div className="grow min-h-full rounded-s-xl border border-[#000000] border-r-0 overflow-hidden ml-16 shadow-xl shadow-[#00000040]">
-					<div className="bg-[#dfdce8] py-2 px-10 font-bold text-2xl">
+				<div className="grow min-h-full rounded-s-xl border border-[#000000] border-r-0 overflow-hidden ml-16 shadow-xl shadow-[#00000040] dark:border-[#ffffff] dark:shadow-[#ffffff40]">
+					<div className="bg-[#dfdce8] py-2 px-10 font-bold text-2xl dark:bg-[#202431]">
 						Timeline
 					</div>
-					<div className="h-full bg-white"></div>
+					<div className="h-full bg-white dark:bg-[#1e1e1e]"></div>
 				</div>
 			</div>
 		</div>

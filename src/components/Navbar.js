@@ -8,14 +8,14 @@ import Link from "next/link";
 
 export default function Navbar({ children }) {
 	const [isDark, setIsDark] = useState(
-		localStorage.theme === "dark" ||
+		localStorage.getItem("theme") === "dark" ||
 			(!("theme" in localStorage) &&
 				window.matchMedia("(prefers-color-scheme: dark)").matches)
 	);
 
 	useEffect(() => {
 		if (
-			localStorage.theme === "dark" ||
+			localStorage.getItem("theme") === "dark" ||
 			(!("theme" in localStorage) &&
 				window.matchMedia("(prefers-color-scheme: dark)").matches)
 		) {
@@ -60,10 +60,10 @@ export default function Navbar({ children }) {
 
 	function handleDarkTheme() {
 		setIsDark(!isDark);
-		localStorage.theme = "dark";
+		localStorage.setItem("theme", "dark");
 	}
 	function handleLightTheme() {
 		setIsDark(!isDark);
-		localStorage.theme = "light";
+		localStorage.setItem("theme", "light");
 	}
 }

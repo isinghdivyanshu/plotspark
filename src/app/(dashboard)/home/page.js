@@ -8,7 +8,7 @@ export default function Home() {
 			className="bg-white dark:bg-black pl-28 dark:text-white pt-28 overflow-hidden"
 			style={{ height: "calc(100vh - 3.75rem" }}
 		>
-			<div className="whitespace-pre-line font-black text-[6.5vw]  leading-tight">
+			<div className="whitespace-pre-line  leading-tight text-[6.5vw] font-[Mont]">
 				Build{" "}
 				<span
 					className="bg-gradient-to-r from-[#0c1f5f] to-[#f4b9a4] dark:from-[#a0b3f3] dark:to-[#f4b9a4] bg-clip-text"
@@ -21,12 +21,12 @@ export default function Home() {
 			<div className="flex justify-between gap-4">
 				<div className="py-16">
 					<div
-						className="font-bold text-lg mb-1"
+						className="font-bold text-[1.5vw] mb-1"
 						style={{ wordSpacing: ".25rem" }}
 					>
 						A visual hub for your entire project.
 					</div>
-					<div className="text-sm mb-5">
+					<div className="text-[1vw] mb-5">
 						Model anything from a product{" "}
 						<span className="font-semibold">roadmap</span> to a{" "}
 						<span className="font-semibold">
@@ -36,7 +36,7 @@ export default function Home() {
 					</div>
 
 					<div className="w-4/5 flex gap-4 my-5 flex-wrap">
-						<button className="bg-[#f4b9a4] rounded-md py-2 grow-[3]">
+						<button className="bg-[#f4b9a4] rounded-md py-2 px-4 grow-[3]">
 							How does it work?
 						</button>
 						<button className="bg-[#0c1f5f] dark:bg-[#a0b3f3] text-white rounded-md py-2 grow">
@@ -65,7 +65,7 @@ export default function Home() {
 					<div className="bg-[#dfdce8] dark:bg-[#202431] rounded-tl-xl py-3 px-10 font-bold text-2xl">
 						Timeline
 					</div>
-					<div className="h-full bg-white dark:bg-[#1e1e1e]"></div>
+					<div className="h-[50vh] bg-white dark:bg-[#1e1e1e]"></div>
 				</div>
 			</div>
 		</div>

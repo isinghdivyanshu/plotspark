@@ -18,8 +18,8 @@ export default function Login() {
 	};
 
 	return (
-		<div className="min-h-screen bg-gradient-to-r from-[#FFEFD7] to-[#FFD7C8] pt-28 pl-28 dark:bg-none dark:bg-black dark:text-white">
-			<div className="flex gap-16">
+		<div className="h-screen relative bg-gradient-to-r from-[#FFEFD7] to-[#FFD7C8] pt-28 pl-28 dark:bg-none dark:bg-[#1a1d28] dark:text-white overflow-hidden">
+			<div className="absolute bottom-24 w-full flex gap-16">
 				<div className="w-1/3 ">
 					<div className="text-[#0C1F5F91] font-normal dark:text-[#a0b3f3]">
 						Hey there,
@@ -113,9 +113,12 @@ export default function Login() {
 						<span>Sign up</span>
 					</Link>
 				</div>
-				<div className="grow min-h-full rounded-s-xl border border-[#000000] border-r-0 overflow-hidden ml-16 shadow-xl shadow-[#00000040] dark:border-[#ffffff] dark:shadow-[#ffffff40]">
-					<div className="bg-[#dfdce8] py-2 px-10 font-bold text-2xl dark:bg-[#202431]">
-						Timeline
+				<div className="grow min-h-full rounded-s-xl border border-[#000000] border-r-0 overflow-hidden ml-16 shadow-[-4px_0px_100px_4px_rgba(0,0,0,0.25)] dark:shadow-[-4px_0px_100px_4px_rgba(255,255,255,0.1)] dark:border-[#ffffff]">
+					<div className="bg-[#dfdce8] pt-2 pb-1 px-10 font-bold text-2xl dark:bg-[#202431]">
+						<div className="flex w-fit flex-col items-center justify-center">
+							Timeline
+							<span className="w-[75%] rounded-xl bg-black dark:bg-white h-1"></span>
+						</div>
 					</div>
 					<div className="h-full bg-white dark:bg-[#1e1e1e]"></div>
 				</div>

@@ -1,18 +1,19 @@
 import InstagramIcon from "@mui/icons-material/Instagram";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
+// import { Mont } from "../fonts";
 
 export default function Home() {
 	return (
 		<div
-			className="bg-white dark:bg-black pl-28 dark:text-white pt-28 overflow-hidden"
+			className="bg-white dark:bg-[#1a1d28] pl-28 dark:text-white pt-28 overflow-hidden"
 			style={{ height: "calc(100vh - 3.75rem" }}
 		>
 			<div className="whitespace-pre-line  leading-tight text-[6.5vw] font-[Mont]">
 				Build{" "}
 				<span
 					className="bg-gradient-to-r from-[#0c1f5f] to-[#f4b9a4] dark:from-[#a0b3f3] dark:to-[#f4b9a4] bg-clip-text"
-					style={{ webkitTextFillColor: "transparent" }}
+					style={{ WebkitTextFillColor: "transparent" }}
 				>
 					interactive
 				</span>{" "}
@@ -61,11 +62,14 @@ export default function Home() {
 						</div>
 					</div>
 				</div>
-				<div className="w-1/2 rounded-tl-xl border border-[#000000] dark:border-[#ffffff] border-r-0 shadow-xl shadow-[#000000] dark:shadow-[#ffffff]">
-					<div className="bg-[#dfdce8] dark:bg-[#202431] rounded-tl-xl py-3 px-10 font-bold text-2xl">
-						Timeline
+				<div className="w-1/2 rounded-tl-xl rounded-bl-xl border border-[#000000] dark:border-[#ffffff] border-r-0 shadow-[-4px_-2px_28px_9px_rgba(0,0,0,0.25)] dark:shadow-[-4px_-2px_28px_9px_rgba(255,255,255,0.1)] ">
+					<div className="bg-[#dfdce8] dark:bg-[#202431] rounded-tl-xl pt-3 pb-1 px-10 font-bold text-2xl">
+						<div className="flex w-fit flex-col items-center justify-center">
+							Timeline
+							<span className="w-[75%] rounded-xl bg-black dark:bg-white h-1"></span>
+						</div>
 					</div>
-					<div className="h-[50vh] bg-white dark:bg-[#1e1e1e]"></div>
+					<div className="h-[52vh] rounded-bl-xl bg-white dark:bg-[#1e1e1e]"></div>
 				</div>
 			</div>
 		</div>

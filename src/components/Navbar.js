@@ -8,13 +8,14 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import Link from "next/link";
 
 export default function Navbar() {
-	const [isDark, setIsDark] = useState(
-		localStorage.getItem("theme") === "dark" ||
-			(!("theme" in localStorage) &&
-				window.matchMedia("(prefers-color-scheme: dark)").matches)
-	);
+	const [isDark, setIsDark] = useState(null);
 
 	useEffect(() => {
+		setIsDark(
+			localStorage.getItem("theme") === "dark" ||
+				(!("theme" in localStorage) &&
+					window.matchMedia("(prefers-color-scheme: dark)").matches)
+		);
 		if (
 			localStorage.getItem("theme") === "dark" ||
 			(!("theme" in localStorage) &&
@@ -24,7 +25,7 @@ export default function Navbar() {
 		} else {
 			document.documentElement.classList.remove("dark");
 		}
-	});
+	}, [isDark]);
 
 	const pathName = usePathname();
 

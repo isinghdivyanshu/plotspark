@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import axios from "../axios";
 import Link from "next/link";
+import axios from "../axios";
 import GoogleIcon from "@mui/icons-material/Google";
 import AppleIcon from "@mui/icons-material/Apple";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -147,7 +147,23 @@ export default function Signup() {
 
 		try {
 			const res = await axios.post("/v1/users/", formData);
-			console.log(res);
+			if (res.data.status === 201 && res.data) {
+				const response = await axios.post("/v1/tokens/authentication", {
+					email: formData.email,
+					password: formData.password,
+				});
+				if (response.status === 201 && res.data) {
+					localStorage.setItem("token", res.data.token);
+					// localStorage.setItem("user", JSON.stringify(res.data.user));
+					router.replace("/");
+				} else if (response.status === 401) {
+					alert("Incorrect Email/Password");
+				} else if (response.status === 422) {
+					alert(
+						"Email must be valid & Password must be at least 8 chars"
+					);
+				}
+			}
 		} catch (err) {
 			console.log(err);
 		}

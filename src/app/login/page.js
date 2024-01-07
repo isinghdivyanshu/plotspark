@@ -1,13 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import axios from "../axios";
 import GoogleIcon from "@mui/icons-material/Google";
 import AppleIcon from "@mui/icons-material/Apple";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 export default function Login() {
+	const router = useRouter();
+
 	const [formData, setFormData] = useState({ name: "", password: "" });
 	const [showPassword, setShowPassword] = useState(false);
 	const hrStyle = {
@@ -130,8 +134,18 @@ export default function Login() {
 		e.preventDefault();
 
 		try {
-			const res = await axios.get("/v1/login/", formData);
-			console.log(res);
+			const res = await axios.post("/v1/tokens/authentication", formData);
+			if (res.status === 201 && res.data) {
+				localStorage.setItem("token", res.data.token);
+				// localStorage.setItem("user", JSON.stringify(res.data.user));
+				router.replace("/");
+			} else if (res.status === 401) {
+				alert("Incorrect Email/Password");
+			} else if (res.status === 422) {
+				alert(
+					"Email must be valid & Password must be at least 8 chars"
+				);
+			}
 		} catch (err) {
 			console.log(err);
 		}

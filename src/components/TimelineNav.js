@@ -4,7 +4,7 @@ import Link from "next/link";
 import AddIcon from "@mui/icons-material/Add";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import CloseTwoToneIcon from "@mui/icons-material/CloseTwoTone";
-import stories from "./stories";
+import {stories} from "./stories";
 
 export default function TimelineNav() {
 	// const [stories, setstories] = useState([]);

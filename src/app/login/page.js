@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "../axios";
+import { toast } from "react-toastify";
 import GoogleIcon from "@mui/icons-material/Google";
 import AppleIcon from "@mui/icons-material/Apple";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -22,8 +23,8 @@ export default function Login() {
 	};
 
 	return (
-		<div className="h-screen relative bg-gradient-to-r from-[#FFEFD7] to-[#FFD7C8] pt-28 pl-28 dark:bg-none dark:bg-[#1a1d28] dark:text-white overflow-hidden">
-			<div className="absolute bottom-24 w-full flex gap-16">
+		<div className="h-screen relative bg-gradient-to-r from-[#FFEFD7] to-[#FFD7C8] pt-3 pl-28 dark:bg-none dark:bg-[#1a1d28] dark:text-white overflow-hidden">
+			<div className="absolute w-full flex gap-16">
 				<div className="w-1/3 ">
 					<div className="text-[#0C1F5F91] font-normal dark:text-[#a0b3f3]">
 						Hey there,
@@ -139,15 +140,17 @@ export default function Login() {
 				localStorage.setItem("token", res.data.token);
 				// localStorage.setItem("user", JSON.stringify(res.data.user));
 				router.replace("/");
+				toast.success("Logged In Successfully");
 			} else if (res.status === 401) {
-				alert("Incorrect Email/Password");
+				toast.error("Incorrect Email/Password");
 			} else if (res.status === 422) {
-				alert(
+				toast.error(
 					"Email must be valid & Password must be at least 8 chars"
 				);
 			}
 		} catch (err) {
 			console.log(err);
+			toast.error(err?.response?.data?.detail);
 		}
 	}
 

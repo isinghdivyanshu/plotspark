@@ -1,7 +1,7 @@
 import InstagramIcon from "@mui/icons-material/Instagram";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-// import { Mont } from "../fonts";
+import Link from "next/link";
 
 export default function Home() {
 	return (
@@ -40,9 +40,12 @@ export default function Home() {
 						<button className="bg-[#f4b9a4] rounded-md py-2 px-4 grow-[3]">
 							How does it work?
 						</button>
-						<button className="bg-[#0c1f5f] dark:bg-[#a0b3f3] text-white rounded-md py-2 grow">
+						<Link
+							href="/timeline"
+							className="bg-[#0c1f5f] dark:bg-[#a0b3f3] text-white rounded-md py-2 grow text-center"
+						>
 							Get Started
-						</button>
+						</Link>
 					</div>
 
 					<div className="flex w-1/2 justify-between">

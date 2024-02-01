@@ -1,5 +1,6 @@
 "use client";
 
+import { characters, events } from "@/components/stories";
 import { useState, useCallback } from "react";
 import ReactFlow, {
 	Controls,
@@ -11,23 +12,19 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 
 export default function Timeline() {
-	const initialNodes = [
-		{
-			id: "1",
-			position: { x: 0, y: 0 },
-			data: { label: "Story" },
-			type: "input",
-		},
-		{
-			id: "2",
-			position: { x: 100, y: 100 },
-			data: { label: "Characters" },
-		},
-	];
+	let nodes = []
+	characters.forEach((character) => {
+		nodes.push(character)
+	})
+	events.forEach((event) => {
+		event.forEach((e) => {
+			nodes.push(e)
+		})
+	})
 	const initialEdges = [];
 	// { id: "1-2", source: "1", target: "2" }
-	const [nodes, setNodes] = useState(initialNodes);
-	const [edges, setEdges] = useState(initialEdges);
+	// const [nodes, setNodes] = useState(initialNodes);
+	// const [edges, setEdges] = useState(initialEdges);
 
 	const onNodesChange = useCallback(
 		(changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -49,10 +46,15 @@ export default function Timeline() {
 			<div className="h-full">
 				<ReactFlow
 					nodes={nodes}
-					onNodesChange={onNodesChange}
-					edges={edges}
-					onEdgesChange={onEdgesChange}
+					// edges={edges}
+					// onEdgesChange={onEdgesChange}
 					onConnect={onConnect}
+					
+					panOnScroll
+					// TODO: implement drag and drop for nodes
+					// snapToGrid={true}
+					// snapGrid={[100,100]}
+
 				>
 					<Background />
 					<Controls />

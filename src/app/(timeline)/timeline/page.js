@@ -1,59 +1,100 @@
 "use client";
 
-import { characters, events } from "@/components/stories";
-import { useState, useCallback } from "react";
+import { backCharacters, backEvents } from "@/components/stories";
 import ReactFlow, {
 	Controls,
-	Background,
+	MiniMap,
 	applyNodeChanges,
 	applyEdgeChanges,
 	addEdge,
 } from "reactflow";
-import "reactflow/dist/style.css";
+import "reactflow/dist/base.css";
 import CustomEdge from "@/components/CustomEdge";
-import CustomNode from "@/components/CustomNode";
+import {
+	CharacterNode,
+	DefaultNode,
+	InputNode,
+	OutputNode,
+} from "@/components/CustomNode";
+
+const nodeTypes = {
+	characterNode: CharacterNode,
+	defaultNode: DefaultNode,
+	inputNode: InputNode,
+	outputNode: OutputNode,
+};
+const edgeTypes = { addNode: CustomEdge };
 
 export default function Timeline() {
-	const nodeTypes = { customNode: CustomNode };
-	const edgeTypes = { "custom-edge": CustomEdge };
-
 	let nodes = [];
-	characters.forEach((character) => {
-		nodes.push(character);
-	});
-	events.forEach((event) => {
-		event.forEach((e) => {
-			nodes.push(e);
+	let edges = [];
+	const nodeColors = ["#D31D8A", "#B1F1BC", "#DEE4F7", "#FFE298", "#4467DE"];
+	let y = 50;
+	backCharacters.forEach((char, index) => {
+		let x = 100;
+		nodes.push({
+			id: `story${char.story_id}-char${char.id}`,
+			position: { x: x, y: y },
+			data: { name: char.name },
+			color: nodeColors[index % nodeColors.length],
+			type: "characterNode",
 		});
+		x += 200;
+		y += 100;
 	});
-	// nodes.push({ id: "btn-1", type: "customNode", position: { x: 50, y: 0 } });
+	y = 50;
+	backEvents.forEach((eventList, index) => {
+		let x = 300;
+		eventList.sort((a, b) => a.index - b.index);
+		eventList.forEach((event) => {
+			if (event.index == eventList.length - 1) {
+				nodes.push({
+					id: `evn-char${index}-${event.index}`,
+					position: { x: x, y: y },
+					data: {
+						title: event.title,
+						index: index,
+						color: nodeColors[index % nodeColors.length],
+					},
+					type: "outputNode",
+				});
+			} else {
+				nodes.push({
+					id: `evn-char${index}-${event.index}`,
+					position: { x: x, y: y },
+					data: {
+						title: event.title,
+						index: index,
+						color: nodeColors[index % nodeColors.length],
+					},
+					type: event.index == 0 ? "inputNode" : "defaultNode",
+				});
+			}
+			if (event.index > 0) {
+				edges.push({
+					id: `evn-char${index}-${event.index - 1}-${event.index}`,
+					source: `evn-char${index}-${event.index - 1}`,
+					target: `evn-char${index}-${event.index}`,
+					type: "addNode",
+				});
+			}
+			x += 200;
+		});
+		y += 100;
+	});
 
-	const edges = [
-		{
-			id: "a->b",
-			type: "custom-edge",
-			source: "evn-char1-4",
-			target: "evn-char1-5",
-		},
-		{
-			id: "b->c",
-			source: "evn-char1-6",
-			target: "evn-char1-7",
-		},
-	];
-
-	// const onNodesChange = useCallback(
-	// 	(changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-	// 	[]
-	// );
-	// const onEdgesChange = useCallback(
-	// 	(changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-	// 	[]
-	// );
-	// const onConnect = useCallback(
-	// 	(params) => setEdges((eds) => addEdge(params, eds)),
-	// 	[]
-	// );
+	function nodeColor(node) {
+		switch (node.type) {
+			case "characterNode":
+				return "#85a1ff";
+			case "inputNode":
+				return "#6ede87";
+			case "outputNode":
+				return "#ff9b85";
+			case "defaultNode":
+				return "grey";
+		}
+	}
 
 	return (
 		<div className="h-full bg-white dark:bg-[#1a1d28]">
@@ -62,15 +103,28 @@ export default function Timeline() {
 					nodes={nodes}
 					edges={edges}
 					nodesConnectable={false}
-					// onEdgesChange={onEdgesChange}
-					// onConnect={onConnect}
 					panOnScroll
+					nodeTypes={nodeTypes}
+					edgeTypes={edgeTypes}
+					translateExtent={[
+						[0, 0],
+						[Infinity, Infinity],
+					]}
+					minZoom={0.5}
+					maxZoom={1.5}
 					// TODO: implement drag and drop for nodes
-					// snapToGrid={true}
-					// snapGrid={[100,100]}
 				>
-					<Background />
-					<Controls />
+					<Controls
+						position="top-left"
+						showFitView={false}
+						className="flex gap-2 m-0 bg-white"
+					/>
+					<MiniMap
+						nodeColor={nodeColor}
+						pannable
+						inversePan
+						className="hover:cursor-pointer"
+					/>
 				</ReactFlow>
 			</div>
 		</div>

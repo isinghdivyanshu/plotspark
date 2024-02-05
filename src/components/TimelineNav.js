@@ -4,7 +4,7 @@ import Link from "next/link";
 import AddIcon from "@mui/icons-material/Add";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import CloseTwoToneIcon from "@mui/icons-material/CloseTwoTone";
-import {stories} from "./stories";
+import { stories } from "./stories";
 
 export default function TimelineNav() {
 	// const [stories, setstories] = useState([]);
@@ -42,7 +42,7 @@ export default function TimelineNav() {
 
 	return (
 		<>
-			<div className="flex bg-[#DEE4F7] py-2 px-5 justify-between">
+			<div className="flex bg-[#DEE4F7] py-2 px-5 justify-between rounded-t-lg border-[#000000] border-2 border-b-0 shadow-lg shadow-zinc-600 dark:bg-[#3b435e]">
 				<div className="flex gap-4">
 					<button className="bg-white font-semibold text-3xl text-black p-1 w-fit h-fit rounded-sm">
 						<AddIcon />
@@ -65,7 +65,7 @@ export default function TimelineNav() {
 							className={
 								timelineActive === true
 									? "bg-white py-1 px-2 rounded text-sm"
-									: "py-1 px-2 font-medium text-sm"
+									: "py-1 px-2 font-medium text-sm dark:text-white"
 							}
 							onClick={() => (
 								setTimelineActive(true),
@@ -79,7 +79,7 @@ export default function TimelineNav() {
 							className={
 								charactersActive === true
 									? "bg-white py-1 px-2 rounded text-sm"
-									: "py-1 px-2 font-medium text-sm"
+									: "py-1 px-2 font-medium text-sm dark:text-white"
 							}
 							onClick={() => (
 								setTimelineActive(false),
@@ -93,7 +93,7 @@ export default function TimelineNav() {
 							className={
 								placesActive === true
 									? "bg-white py-1 px-2 rounded text-sm"
-									: "py-1 px-2 font-medium text-sm"
+									: "py-1 px-2 font-medium text-sm dark:text-white"
 							}
 							onClick={() => (
 								setTimelineActive(false),

@@ -1,23 +1,22 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
+import { useStore } from "@/app/store";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 import AddIcon from "@mui/icons-material/Add";
-import FilterAltIcon from "@mui/icons-material/FilterAlt";
+// import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import CloseTwoToneIcon from "@mui/icons-material/CloseTwoTone";
 import { stories } from "./stories";
 
 export default function TimelineNav() {
+	const { darkMode, toggleDarkMode } = useStore();
+	// TODO: add characters and places feature or any other feature
 	// const [stories, setstories] = useState([]);
-	const [timelineActive, setTimelineActive] = useState(true);
-	const [charactersActive, setCharactersActive] = useState(false);
-	const [placesActive, setPlacesActive] = useState(false);
+	// const [timelineActive, setTimelineActive] = useState(true);
+	// const [charactersActive, setCharactersActive] = useState(false);
+	// const [placesActive, setPlacesActive] = useState(false);
 	const [currentStory, setCurrentStory] = useState(stories[0]);
-
-	// const style = {
-	// 	backgroundColor: "#B6C1E8",
-	// 	height: "4px",
-	// 	border: "none",
-	// };
 
 	// useEffect(() => {
 	// 	const getStories = async () => {
@@ -60,7 +59,7 @@ export default function TimelineNav() {
 					>
 						<ListStories />
 					</select>
-					<div className="flex justify-center items-center gap-3">
+					{/* <div className="flex justify-center items-center gap-3">
 						<button
 							className={
 								timelineActive === true
@@ -103,19 +102,30 @@ export default function TimelineNav() {
 						>
 							Places
 						</button>
-					</div>
+					</div> */}
 				</div>
 				<div className="flex gap-4 items-center justify-center">
-					<button className="flex items-center justify-center bg-white py-1 px-2 rounded">
+					{/* // TODO: add filtering */}
+					{/* <button className="flex items-center justify-center bg-white py-1 px-2 rounded">
 						<FilterAltIcon />
 						Filter
-					</button>
+					</button> */}
+					{darkMode === false ? (
+						<DarkModeIcon
+							onClick={toggleDarkMode}
+							className="hover:cursor-pointer"
+						/>
+					) : (
+						<LightModeIcon
+							onClick={toggleDarkMode}
+							className="hover:cursor-pointer dark:text-white"
+						/>
+					)}
 					<Link href="/">
 						<CloseTwoToneIcon color="disabled" fontSize="small" />
 					</Link>
 				</div>
 			</div>
-			{/* <hr className="w-[95%] block" style={style} /> */}
 		</>
 	);
 

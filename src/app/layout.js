@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
+import ThemeProvider from "./providers/ThemeProvider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -15,7 +16,7 @@ export default function RootLayout({ children }) {
 		<html lang="en">
 			<body className={inter.className}>
 				<ToastContainer
-					position="top-right"
+					position="bottom-right"
 					autoClose={5000}
 					hideProgressBar={false}
 					newestOnTop={false}
@@ -26,7 +27,7 @@ export default function RootLayout({ children }) {
 					pauseOnHover
 					theme="colored"
 				/>
-				{children}
+				<ThemeProvider>{children}</ThemeProvider>
 			</body>
 		</html>
 	);

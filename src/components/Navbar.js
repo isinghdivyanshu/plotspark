@@ -1,7 +1,8 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useStore } from "@/app/store";
+import { toast } from "react-toastify";
 // import SearchIcon from "@mui/icons-material/Search";
 import PersonIcon from "@mui/icons-material/Person";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
@@ -9,8 +10,9 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import Link from "next/link";
 
 export default function Navbar() {
-	const { isLoggedIn, darkMode, toggleDarkMode } = useStore();
+	const { email, isLoggedIn, logout, darkMode, toggleDarkMode } = useStore();
 
+	const router = useRouter();
 	const pathName = usePathname();
 
 	return (
@@ -36,10 +38,28 @@ export default function Navbar() {
 					/>
 				)}
 				{isLoggedIn ? (
-					<PersonIcon
-						fontSize="large"
-						className="hover:cursor-pointer"
-					/>
+					<div className="dropdown relative">
+						<PersonIcon
+							fontSize="large"
+							className="hover:cursor-pointer dark:text-white"
+						/>
+						<div className="dropdowncontent hidden absolute right-0 bg-[#e9c3b4] dark:bg-slate-600 p-2 shadow-md shadow-[rgba(0, 0, 0, 0.2)] dark:shadow-[#898c8e] rounded-md">
+							<span className="text-gray-400 italic">User: </span>{" "}
+							<span className=" text-black border p-1 rounded border-gray-400 mb-2">
+								{email}
+							</span>
+							<button
+								onClick={() => {
+									logout(),
+										toast.success("Logged out"),
+										router.push("/");
+								}}
+								className="my-3 border border-black py-1 px-4 rounded"
+							>
+								Logout
+							</button>
+						</div>
+					</div>
 				) : (
 					<Link href="/login">
 						<div className="bg-black dark:bg-white py-1 px-3 text-white dark:text-black text-sm rounded-md  ">
@@ -54,8 +74,8 @@ export default function Navbar() {
 	function NavLinks() {
 		const links = [
 			{ name: "Home", path: "/" },
-			{ name: "Features", path: "/features" },
-			{ name: "Contact", path: "/contact" },
+			// { name: "Features", path: "/features" },
+			// { name: "Contact", path: "/contact" },
 		];
 		return (
 			<>

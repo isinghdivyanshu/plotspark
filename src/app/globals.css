@@ -6,3 +6,11 @@
 	font-family: "Mont";
 	src: url("/fonts/Mont-Black.ttf");
 }
+
+.dropdown:hover .dropdowncontent {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	z-index: 1;
+}

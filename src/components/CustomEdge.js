@@ -17,6 +17,12 @@ export default function CustomEdge({
 		targetY,
 	});
 
+	const isOpen = data.isOpen;
+	const setIsOpen = data.setIsOpen;
+	const modalData = data.modalData;
+	const setModalData = data.setModalData;
+	const setModalType = data.setModalType;
+
 	return (
 		<>
 			<BaseEdge
@@ -36,6 +42,18 @@ export default function CustomEdge({
 						pointerEvents: "all",
 					}}
 					className="nodrag nopan rounded-full bg-transparent flex items-center justify-center "
+					onClick={() => {
+						setIsOpen({
+							...isOpen,
+							addEventModal: "true",
+						}),
+							setModalData({
+								character_id: data.character_id,
+								index: data.index,
+								getCharsEvents: data.getCharsEvents,
+							}),
+							setModalType("addEvent");
+					}}
 				>
 					<AddIcon
 						className={`text-lg hover:scale-125 bg-white rounded-full outline outline-[${data.color}] dark:bg-[#1a1d28]`}

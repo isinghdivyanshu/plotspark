@@ -16,6 +16,7 @@ function CharNode({ data }) {
 				}),
 					setModalData({
 						id: data.id,
+						story_id: data.story_id,
 						name: data.name,
 						description: data.description,
 						getCharsEvents: data.getCharsEvents,
@@ -89,8 +90,11 @@ function InNode({ data }) {
 				}),
 					setModalData({
 						id: data.id,
+						character_id: data.character_id,
 						title: data.title,
 						description: data.description,
+						index: data.index,
+						getCharsEvents: data.getCharsEvents,
 					}),
 					setModalType("event");
 			}}

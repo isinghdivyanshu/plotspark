@@ -84,7 +84,7 @@ export default function CallModal({
 }
 
 function CharacterModal({ data, isOpen, onClose, style }) {
-	const [oldCharacterDetail, setOldCharacterEventDetail] = useState({
+	const [oldCharacterDetail, setOldCharacterDetail] = useState({
 		name: data.name,
 		description: data.description,
 	});
@@ -142,9 +142,11 @@ function CharacterModal({ data, isOpen, onClose, style }) {
 										}
 									);
 									if (res.data.character) {
-										getCharsEvents();
+										await getCharsEvents();
+										setOldCharacterDetail(
+											newCharacterDetail
+										);
 										toast.success("Character Updated");
-										onClose();
 									}
 								} catch (err) {
 									toast.error("Error Updating Character");
@@ -153,6 +155,7 @@ function CharacterModal({ data, isOpen, onClose, style }) {
 						  }
 				}
 				className="p-10 dark:text-white"
+				autoComplete="off"
 			>
 				<label htmlFor="name" className="flex flex-col gap-1">
 					Name
@@ -194,8 +197,24 @@ function CharacterModal({ data, isOpen, onClose, style }) {
 				</label>
 				<button
 					className="float-left w-32 text-xl bg-[#D31D8A] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#882962]"
-					onClick={() => {
-						console.log("Save");
+					onClick={async () => {
+						try {
+							const res = await axios.delete(
+								`v1/characters/${data.id}`,
+								{
+									data: {
+										story_id: data.story_id,
+									},
+								}
+							);
+							if (res.data.message) {
+								await getCharsEvents();
+								toast.success("Character Deleted");
+							}
+						} catch (err) {
+							toast.error("Error Deleting Character");
+							console.log(err);
+						}
 					}}
 				>
 					Delete
@@ -271,9 +290,9 @@ function EventModal({ data, isOpen, onClose, style }) {
 										}
 									);
 									if (res.data.Event) {
-										getCharsEvents();
+										await getCharsEvents();
+										setOldEventDetail(newEventDetail);
 										toast.success("Event Updated");
-										onClose();
 									}
 								} catch (err) {
 									toast.error("Error Updating Event");
@@ -282,6 +301,7 @@ function EventModal({ data, isOpen, onClose, style }) {
 						  }
 				}
 				className="p-10 dark:text-white"
+				autoComplete="off"
 			>
 				<label htmlFor="title" className="flex flex-col gap-1">
 					Title
@@ -323,8 +343,24 @@ function EventModal({ data, isOpen, onClose, style }) {
 				</label>
 				<button
 					className="float-left w-32 text-xl bg-[#D31D8A] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#882962]"
-					onClick={() => {
-						console.log("Save");
+					onClick={async () => {
+						try {
+							const res = await axios.delete(
+								`v1/events/${data.id}`,
+								{
+									data: {
+										character_id: data.character_id,
+									},
+								}
+							);
+							if (res.data.message) {
+								await getCharsEvents();
+								toast.success("Event Deleted");
+							}
+						} catch (err) {
+							toast.error("Error Deleting Event");
+							console.log(err);
+						}
 					}}
 				>
 					Delete
@@ -383,7 +419,7 @@ function AddCharacterModal({ data, isOpen, onClose, style }) {
 							}
 						);
 						if (res.data.character) {
-							getCharsEvents();
+							await getCharsEvents();
 							toast.success("Character Added");
 							onClose();
 						}
@@ -399,6 +435,7 @@ function AddCharacterModal({ data, isOpen, onClose, style }) {
 					}
 				}}
 				className="p-10 dark:text-white"
+				autoComplete="off"
 			>
 				<label htmlFor="name" className="flex flex-col gap-1">
 					Name
@@ -415,6 +452,7 @@ function AddCharacterModal({ data, isOpen, onClose, style }) {
 						}
 						placeholder="Type Here"
 						className="rounded-xl p-3 mb-3 dark:text-black border border-[#72659A] focus:outline-none"
+						autoFocus
 						required
 					/>
 				</label>
@@ -493,7 +531,7 @@ function AddEventModal({ data, isOpen, onClose, style }) {
 							}
 						);
 						if (res.data.event) {
-							getCharsEvents();
+							await getCharsEvents();
 							toast.success("Event Added");
 							onClose();
 						}
@@ -503,6 +541,7 @@ function AddEventModal({ data, isOpen, onClose, style }) {
 					}
 				}}
 				className="p-10 dark:text-white"
+				autoComplete="off"
 			>
 				<label htmlFor="title" className="flex flex-col gap-1">
 					Title
@@ -519,6 +558,7 @@ function AddEventModal({ data, isOpen, onClose, style }) {
 						}
 						placeholder="Type Here"
 						className="rounded-xl p-3 mb-3 dark:text-black border border-[#72659A] focus:outline-none"
+						autoFocus
 						required
 					/>
 				</label>
@@ -540,7 +580,6 @@ function AddEventModal({ data, isOpen, onClose, style }) {
 						placeholder="Type Here"
 						rows={3}
 						className="rounded-xl p-3 mb-3 dark:text-black border border-[#72659A] focus:outline-none"
-						required
 					/>
 				</label>
 				<button
@@ -603,13 +642,8 @@ function AddStoryModal({
 								)}`,
 							},
 						});
-						try {
-							if (response.data.stories) {
-								setStories(response.data.stories);
-							}
-						} catch (err) {
-							toast.error("Try Refreshing The Page");
-							console.log(err);
+						if (response.data.stories) {
+							setStories(response.data.stories);
 						}
 						if (res.data.story) {
 							setCurrentStory(res.data.story);
@@ -617,11 +651,16 @@ function AddStoryModal({
 							onClose();
 						}
 					} catch (err) {
-						toast.error("Error Adding Story");
-						console.log(err);
+						if (err.response.status === 422) {
+							toast.error("Story with same title already exists");
+						} else {
+							toast.error("Error Adding Story");
+							console.log(err);
+						}
 					}
 				}}
 				className="p-10 dark:text-white"
+				autoComplete="off"
 			>
 				<label htmlFor="title" className="flex flex-col gap-1">
 					Title
@@ -638,6 +677,7 @@ function AddStoryModal({
 						}
 						placeholder="Add Title"
 						className="rounded-xl p-3 mb-3 dark:text-black border border-[#72659A] focus:outline-none"
+						autoFocus
 						required
 					/>
 				</label>

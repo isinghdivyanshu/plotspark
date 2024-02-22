@@ -12,7 +12,6 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import AddIcon from "@mui/icons-material/Add";
 // import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import CloseTwoToneIcon from "@mui/icons-material/CloseTwoTone";
-// import { stories } from "./stories";
 
 export default function TimelineNav() {
 	const router = useRouter();
@@ -36,27 +35,28 @@ export default function TimelineNav() {
 	// const [charactersActive, setCharactersActive] = useState(false);
 	// const [placesActive, setPlacesActive] = useState(false);
 
-	useEffect(() => {
-		async function getStories() {
-			try {
-				const res = await axios.get("v1/stories", {
-					headers: {
-						Authorization: `Bearer ${localStorage.getItem(
-							"authToken"
-						)}`,
-					},
-				});
-				if (res) {
-					setStories(res.data.stories);
-					setCurrentStory(
-						currentStory === "" ? res.data.stories[0] : currentStory
-					);
-				}
-			} catch (err) {
-				toast.error("Error Fetching Stories");
-				console.log(err?.response?.data?.detail);
+	async function getStories() {
+		try {
+			const res = await axios.get("v1/stories", {
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem(
+						"authToken"
+					)}`,
+				},
+			});
+			if (res) {
+				setStories(res.data.stories);
+				setCurrentStory(
+					currentStory === "" ? res.data.stories[0] : currentStory
+				);
 			}
+		} catch (err) {
+			toast.error("Error Fetching Stories");
+			console.log(err?.response?.data?.detail);
 		}
+	}
+
+	useEffect(() => {
 		if (isLoggedIn) {
 			getStories();
 		}
@@ -87,13 +87,13 @@ export default function TimelineNav() {
 					<select
 						className="py-1 px-5  bg-white rounded text-sm appearance-none cursor-pointer outline-none hover:scale-105 after:content-none after:path"
 						value={currentStory?.title}
-						// onChange={(e) => {
-						// 	let foundStory = stories.find(
-						// 		(story) => story.name === e.target.value
-						// 	);
-						// 	// setCurrentStory(foundStory.id);
-						// 	console.log(foundStory);
-						// }}
+						onChange={(e) => {
+							setCurrentStory(
+								stories.find(
+									(story) => story.title === e.target.value
+								)
+							);
+						}}
 					>
 						<ListStories />
 					</select>
@@ -203,13 +203,7 @@ export default function TimelineNav() {
 	function ListStories() {
 		return stories.map((story) => {
 			return (
-				<option
-					key={story.id}
-					value={story.title}
-					onClick={() => {
-						setCurrentStory(story);
-					}}
-				>
+				<option key={story.id} value={story.title}>
 					{story.title}
 				</option>
 			);

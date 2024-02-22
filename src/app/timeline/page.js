@@ -23,7 +23,6 @@ import {
 	AddCharacterButton,
 	DummyEventNode,
 } from "@/components/CustomNode";
-// import { data } from "@/components/stories";
 
 const nodeTypes = {
 	characterNode: CharacterNode,
@@ -74,11 +73,10 @@ function Timeline() {
 	}
 
 	useEffect(() => {
-		if (isLoggedIn && typeof window !== "undefined") {
+		if (isLoggedIn && localStorage.getItem("currentStory")) {
 			getCharsEvents();
 		}
 	}, [currentStory]);
-	// console.log(storyData);
 
 	const closeModals = () => {
 		setAreModalsOpen({
@@ -151,27 +149,6 @@ function Timeline() {
 					chapters = char.events.length;
 				}
 				let x = 400;
-				if (char.events.length === 0) {
-					nodes.push({
-						id: `node-char${char.character_index}-dummyEvn`,
-						position: { x: x, y: y },
-						data: {
-							character_id: char.character_id,
-							getCharsEvents: getCharsEvents,
-							color: nodeColors[
-								char.character_index % nodeColors.length
-							],
-							isOpen: areModalsOpen,
-							setIsOpen: setAreModalsOpen,
-							onClose: closeModals,
-							modalData: modalData,
-							setModalData: setModalData,
-							setModalType: setModalType,
-						},
-						type: "dummyEventNode",
-					});
-					x = 400;
-				}
 				char.events.forEach((event) => {
 					nodes.push({
 						id: `node-char${char.character_index}-evn${event.index}`,
@@ -180,7 +157,9 @@ function Timeline() {
 							id: event.id,
 							character_id: event.character_id,
 							title: event.title,
-							description: event.description,
+							description: event.description
+								? event.description
+								: "",
 							index: event.index,
 							getCharsEvents: getCharsEvents,
 							color: nodeColors[
@@ -193,9 +172,9 @@ function Timeline() {
 							setModalData: setModalData,
 							setModalType: setModalType,
 						},
-						type: event.index == 0 ? "inputNode" : "defaultNode",
+						type: event.index === 1 ? "inputNode" : "defaultNode",
 					});
-					if (event.index > 0) {
+					if (event.index > 1) {
 						edges.push({
 							id: `edge-char${char.character_index}-evn${
 								event.index - 1
@@ -223,22 +202,52 @@ function Timeline() {
 					}
 					x += 250;
 				});
-				nodes.push({
-					id: `node-char${char.character_index}-evn${char.events.length}`,
-					position: { x: x, y: y },
-					type: "nothingNode",
-				});
+				if (char.events.length === 0) {
+					nodes.push({
+						id: `node-char${char.character_index}-dummyEvn`,
+						position: { x: x, y: y },
+						data: {
+							character_id: char.character_id,
+							getCharsEvents: getCharsEvents,
+							color: nodeColors[
+								char.character_index % nodeColors.length
+							],
+							isOpen: areModalsOpen,
+							setIsOpen: setAreModalsOpen,
+							onClose: closeModals,
+							modalData: modalData,
+							setModalData: setModalData,
+							setModalType: setModalType,
+						},
+						type: "dummyEventNode",
+					});
+				} else {
+					nodes.push({
+						id: `node-char${char.character_index}-evn${
+							char.events.length + 1
+						}`,
+						position: { x: x, y: y },
+						type: "nothingNode",
+					});
+				}
 				edges.push({
 					id: `edge-char${char.character_index}-evn${
-						char.events.length - 1
-					}-evn${char.events.length}`,
-					source: `node-char${char.character_index}-evn${
-						char.events.length - 1
+						char.events.length
+					}-evn${char.events.length + 1}`,
+					source: `node-char${char.character_index}-evn${char.events.length}`,
+					target: `node-char${char.character_index}-evn${
+						char.events.length + 1
 					}`,
-					target: `node-char${char.character_index}-evn${char.events.length}`,
 					data: {
-						index: char.events.length,
+						index: char.events.length + 1,
 						character_id: char.character_id,
+						getCharsEvents: getCharsEvents,
+						isOpen: areModalsOpen,
+						setIsOpen: setAreModalsOpen,
+						onClose: closeModals,
+						modalData: modalData,
+						setModalData: setModalData,
+						setModalType: setModalType,
 						color: nodeColors[
 							char.character_index % nodeColors.length
 						],

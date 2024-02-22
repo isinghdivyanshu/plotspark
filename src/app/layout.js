@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
+import AuthProvider from "./providers/AuthProvider";
 import ThemeProvider from "./providers/ThemeProvider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -27,7 +28,9 @@ export default function RootLayout({ children }) {
 					pauseOnHover
 					theme="colored"
 				/>
-				<ThemeProvider>{children}</ThemeProvider>
+				<AuthProvider>
+					<ThemeProvider>{children}</ThemeProvider>
+				</AuthProvider>
 			</body>
 		</html>
 	);

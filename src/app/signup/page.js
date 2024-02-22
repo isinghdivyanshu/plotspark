@@ -18,12 +18,12 @@ export default function Signup() {
 
 	const [showPassword, setShowPassword] = useState(false);
 
-	const style = {
-		backgroundColor:
-			localStorage.getItem("theme") === "dark" ? "#d1d1d1" : "#7979794d",
-		height: "1px",
-		border: "none",
-	};
+	// const style = {
+	// 	backgroundColor:
+	// 		localStorage.getItem("theme") === "dark" ? "#d1d1d1" : "#7979794d",
+	// 	height: "1px",
+	// 	border: "none",
+	// };
 
 	//TODO: Add Google & Apple signup
 
@@ -31,9 +31,9 @@ export default function Signup() {
 		<div className="h-screen flex justify-center items-center bg-gradient-to-r from-[#FFEFD7] to-[#FFD7C8] dark:bg-none dark:bg-[#1a1d28] dark:text-white">
 			<div className="lg:w-[40%] w-full p-5 lg:p-24">
 				<div className="text-[#0C1F5F91] font-normal dark:text-[#a0b3f3]">
-					Hey there,
+					Hey there, Welcome
 				</div>
-				<div className="font-black text-4xl mb-10 ">Welcome Back</div>
+				<div className="font-black text-4xl mb-10 ">Get Started</div>
 				{/* <div className="flex gap-2 mb-5 justify-around">
 						<button
 							type="button"
@@ -153,7 +153,6 @@ export default function Signup() {
 				});
 				if (response.status === 201 && res.data) {
 					localStorage.setItem("token", res.data.token);
-					// localStorage.setItem("user", JSON.stringify(res.data.user));
 					router.replace("/");
 					toast.success("Logged in Successfully");
 				} else if (response.status === 401) {

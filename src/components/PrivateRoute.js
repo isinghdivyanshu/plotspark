@@ -1,21 +1,26 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import { useEffect } from "react";
+import { useStore } from "@/app/store";
+import { toast } from "react-toastify";
 
-export default function PrivateRoute({ children }) {
-	const router = useRouter();
+export default function PrivateRoute(Component) {
+	return function IsAuth(props) {
+		const { isLoggedIn } = useStore();
+		useEffect(() => {
+			const auth = localStorage.getItem("authToken");
+			const email = localStorage.getItem("userEmail");
+			if (!auth || !email) {
+				toast.error("Login to view your Stories");
+				redirect("/");
+			}
+		}, [isLoggedIn]);
 
-	useEffect(() => {
-		const auth = localStorage.getItem("token");
-		if (!auth) {
-			router.push("/");
+		if (!isLoggedIn) {
+			return null;
 		}
 
-		if (!auth) {
-			return;
-		}
-	});
-
-	return children;
+		return <Component {...props} />;
+	};
 }

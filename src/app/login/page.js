@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "../axios";
+import { useStore } from "@/app/store";
 import { toast } from "react-toastify";
 // import GoogleIcon from "@mui/icons-material/Google";
 // import AppleIcon from "@mui/icons-material/Apple";
@@ -11,16 +12,17 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 export default function Login() {
+	const { login } = useStore();
 	const router = useRouter();
 
-	const [formData, setFormData] = useState({ name: "", password: "" });
+	const [formData, setFormData] = useState({ email: "", password: "" });
 	const [showPassword, setShowPassword] = useState(false);
-	const hrStyle = {
-		backgroundColor:
-			localStorage.getItem("theme") === "dark" ? "#d1d1d1" : "#7979794d",
-		height: "1px",
-		border: "none",
-	};
+	// const hrStyle = {
+	// 	backgroundColor:
+	// 		localStorage.getItem("theme") === "dark" ? "#d1d1d1" : "#7979794d",
+	// 	height: "1px",
+	// 	border: "none",
+	// };
 
 	//TODO: Add Google & Apple Login
 
@@ -55,16 +57,19 @@ export default function Login() {
 						<hr className="w-full inline-block" style={hrStyle} />
 					</div> */}
 				<form onSubmit={handleSubmit}>
-					<label htmlFor="name" className="flex flex-col gap-2 mt-8 ">
-						Name
+					<label
+						htmlFor="email"
+						className="flex flex-col gap-2 mt-8 "
+					>
+						Email
 						<input
-							type="text"
-							name="name"
-							id="name"
+							type="email"
+							name="email"
+							id="email"
 							value={formData.name}
 							onChange={handleChange}
 							placeholder="Type Here"
-							autoComplete="name"
+							autoComplete="email"
 							className="rounded-xl p-3 mb-6 dark:text-black"
 							required
 						/>
@@ -129,20 +134,26 @@ export default function Login() {
 		try {
 			const res = await axios.post("/v1/tokens/authentication", formData);
 			if (res.status === 201 && res.data) {
-				localStorage.setItem("token", res.data.token);
-				// localStorage.setItem("user", JSON.stringify(res.data.user));
+				localStorage.setItem("userEmail", formData.email);
+				localStorage.setItem(
+					"authToken",
+					res.data.authentication_token.token
+				);
+				login(formData.email, localStorage.token);
 				router.replace("/");
 				toast.success("Logged In Successfully");
-			} else if (res.status === 401) {
+			}
+		} catch (err) {
+			if (err?.response?.status === 401) {
 				toast.error("Incorrect Email/Password");
-			} else if (res.status === 422) {
+			} else if (err?.response?.status === 422) {
 				toast.error(
 					"Email must be valid & Password must be at least 8 chars"
 				);
+			} else {
+				console.log(err);
+				toast.error(err?.response?.data?.detail);
 			}
-		} catch (err) {
-			console.log(err);
-			toast.error(err?.response?.data?.detail);
 		}
 	}
 

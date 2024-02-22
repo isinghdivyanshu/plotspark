@@ -148,7 +148,13 @@ function Timeline() {
 				if (chapters < char.events.length) {
 					chapters = char.events.length;
 				}
-				let x = 400;
+				let x = 340;
+				nodes.push({
+					id: `node-char${char.character_index}-evn0`,
+					position: { x: x, y: y },
+					type: "nothingNode",
+				});
+				x = 400;
 				char.events.forEach((event) => {
 					nodes.push({
 						id: `node-char${char.character_index}-evn${event.index}`,
@@ -172,7 +178,7 @@ function Timeline() {
 							setModalData: setModalData,
 							setModalType: setModalType,
 						},
-						type: event.index === 1 ? "inputNode" : "defaultNode",
+						type: "defaultNode",
 					});
 					if (event.index > 1) {
 						edges.push({
@@ -200,6 +206,7 @@ function Timeline() {
 							type: "addNode",
 						});
 					}
+
 					x += 250;
 				});
 				if (char.events.length === 0) {
@@ -228,6 +235,26 @@ function Timeline() {
 						}`,
 						position: { x: x, y: y },
 						type: "nothingNode",
+					});
+					edges.push({
+						id: `edge-char${char.character_index}-evn0-evn1`,
+						source: `node-char${char.character_index}-evn0`,
+						target: `node-char${char.character_index}-evn1`,
+						data: {
+							index: 1,
+							character_id: char.character_id,
+							getCharsEvents: getCharsEvents,
+							isOpen: areModalsOpen,
+							setIsOpen: setAreModalsOpen,
+							onClose: closeModals,
+							modalData: modalData,
+							setModalData: setModalData,
+							setModalType: setModalType,
+							color: nodeColors[
+								char.character_index % nodeColors.length
+							],
+						},
+						type: "addNode",
 					});
 				}
 				edges.push({

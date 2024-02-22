@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import { Handle, Position } from "reactflow";
 
 function CharNode({ data }) {
@@ -29,7 +29,7 @@ function CharNode({ data }) {
 		</button>
 	);
 }
-export const CharacterNode = memo(CharNode);
+export const CharacterNode = CharNode;
 
 function DefNode({ data }) {
 	const isOpen = data.isOpen;
@@ -72,7 +72,7 @@ function DefNode({ data }) {
 		</button>
 	);
 }
-export const DefaultNode = memo(DefNode);
+export const DefaultNode = DefNode;
 
 function InNode({ data }) {
 	const isOpen = data.isOpen;
@@ -110,7 +110,7 @@ function InNode({ data }) {
 		</button>
 	);
 }
-export const InputNode = memo(InNode);
+export const InputNode = InNode;
 
 function OutNode({ data }) {
 	const isOpen = data.isOpen;
@@ -145,7 +145,7 @@ function OutNode({ data }) {
 		</button>
 	);
 }
-export const OutputNode = memo(OutNode);
+export const OutputNode = OutNode;
 
 function AddCharBtn({ data }) {
 	const isOpen = data.isOpen;
@@ -173,7 +173,7 @@ function AddCharBtn({ data }) {
 		</button>
 	);
 }
-export const AddCharacterButton = memo(AddCharBtn);
+export const AddCharacterButton = AddCharBtn;
 
 function DumEvnNode({ data }) {
 	const isOpen = data.isOpen;
@@ -203,7 +203,7 @@ function DumEvnNode({ data }) {
 		</button>
 	);
 }
-export const DummyEventNode = memo(DumEvnNode);
+export const DummyEventNode = DumEvnNode;
 
 function ChapNode({ data }) {
 	return (
@@ -212,11 +212,11 @@ function ChapNode({ data }) {
 		</div>
 	);
 }
-export const ChapterNode = memo(ChapNode);
+export const ChapterNode = ChapNode;
 
 function NoNode() {
 	return (
-		<div className="nodrag nopan  w-40 h-14">
+		<div className="nodrag nopan  w-1 h-14">
 			<Handle
 				type="target"
 				position={Position.Left}
@@ -224,7 +224,14 @@ function NoNode() {
 					backgroundColor: "transparent",
 				}}
 			/>
+			<Handle
+				type="source"
+				position={Position.Right}
+				style={{
+					backgroundColor: "transparent",
+				}}
+			/>
 		</div>
 	);
 }
-export const NothingNode = memo(NoNode);
+export const NothingNode = NoNode;

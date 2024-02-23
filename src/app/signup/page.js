@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useStore } from "@/app/store";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "../axios";
 import { toast } from "react-toastify";
@@ -10,6 +12,9 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 export default function Signup() {
+	const router = useRouter();
+	const { setEmail } = useStore();
+
 	const [formData, setFormData] = useState({
 		name: "",
 		email: "",
@@ -145,27 +150,26 @@ export default function Signup() {
 
 		try {
 			const res = await axios.post("/v1/users/", formData);
-			if (res.data.status === 201 && res.data) {
+			if (res.data) {
 				toast.success("Account Created Successfully");
-				const response = await axios.post("/v1/tokens/authentication", {
+				const response = await axios.post("/v1/tokens/activation", {
 					email: formData.email,
-					password: formData.password,
 				});
-				if (response.status === 201 && res.data) {
-					localStorage.setItem("token", res.data.token);
-					router.replace("/");
-					toast.success("Logged in Successfully");
-				} else if (response.status === 401) {
-					toast.error("Incorrect Email/Password");
-				} else if (response.status === 422) {
-					toast.error(
-						"Email must be valid & Password must be at least 8 chars"
+				if (response.data.message) {
+					setEmail(formData.email);
+					router.replace("/activation");
+					toast.info(
+						"Activation email sent. Please verify your email."
 					);
 				}
 			}
 		} catch (err) {
-			console.log(err);
-			toast.error(err?.response?.data?.detail);
+			if (err?.response?.status === 422) {
+				toast.error("Email already exists. Please login.");
+			} else {
+				toast.error(err?.response?.data?.detail);
+				console.log(err);
+			}
 		}
 	}
 

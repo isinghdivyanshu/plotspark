@@ -2,6 +2,10 @@ import { create } from "zustand";
 
 export const useStore = create((set) => ({
 	email: "",
+	setEmail: (email) => {
+		set({ email: email });
+	},
+
 	token: "",
 	isLoggedIn: false,
 	login: (email, token) => {
@@ -56,6 +60,9 @@ export const useStore = create((set) => ({
 				email: userEmail,
 				token: authToken,
 			});
+		}
+		if (userEmail) {
+			set({ email: userEmail });
 		}
 
 		const currentStory =

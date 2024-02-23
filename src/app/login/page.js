@@ -12,7 +12,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 export default function Login() {
-	const { login } = useStore();
+	const { setEmail, login } = useStore();
 	const router = useRouter();
 
 	const [formData, setFormData] = useState({ email: "", password: "" });
@@ -133,7 +133,18 @@ export default function Login() {
 
 		try {
 			const res = await axios.post("/v1/tokens/authentication", formData);
-			if (res.status === 201 && res.data) {
+			if (res.data && !res.data.activated) {
+				const response = await axios.post("/v1/tokens/activation", {
+					email: formData.email,
+				});
+				if (response.data.message) {
+					setEmail(formData.email);
+					router.replace("/activation");
+					toast.info(
+						"Activation email sent. Please verify your email."
+					);
+				}
+			} else if (res.data && res.data.activated) {
 				localStorage.setItem("userEmail", formData.email);
 				localStorage.setItem(
 					"authToken",

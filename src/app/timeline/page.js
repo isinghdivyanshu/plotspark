@@ -73,7 +73,11 @@ function Timeline() {
 	}
 
 	useEffect(() => {
-		if (isLoggedIn && localStorage.getItem("currentStory")) {
+		if (
+			isLoggedIn &&
+			currentStory !== "" &&
+			localStorage.getItem("currentStory") !== "undefined"
+		) {
 			getCharsEvents();
 		}
 	}, [currentStory]);
@@ -315,7 +319,11 @@ function Timeline() {
 			});
 		}
 	}
-	if (typeof window !== "undefined") {
+	if (
+		typeof window !== "undefined" &&
+		localStorage.getItem("currentStory") !== "undefined" &&
+		localStorage.getItem("currentStory") !== null
+	) {
 		createNodesEdges();
 	}
 
@@ -355,7 +363,7 @@ function Timeline() {
 							// TODO: implement drag and drop for nodes
 						>
 							<Controls
-								position="top-left"
+								position="bottom-left"
 								showFitView={false}
 								className="flex gap-2 m-0 bg-white w-24 justify-around"
 							/>

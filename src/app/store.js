@@ -35,8 +35,9 @@ export const useStore = create((set) => ({
 
 	currentStory:
 		typeof window !== "undefined" &&
-		window.localStorage &&
-		localStorage.getItem("currentStory")
+		localStorage.getItem("currentStory") !== "" &&
+		localStorage.getItem("currentStory") !== null &&
+		localStorage.getItem("currentStory") !== "undefined"
 			? JSON.parse(localStorage.getItem("currentStory"))
 			: "",
 	setCurrentStory: (storyObject) => {
@@ -57,9 +58,12 @@ export const useStore = create((set) => ({
 			});
 		}
 
-		const currentStory = JSON.parse(localStorage.getItem("currentStory"));
-		if (currentStory) {
-			set({ currentStory: currentStory });
-		}
+		const currentStory =
+			localStorage.getItem("currentStory") !== "" &&
+			localStorage.getItem("currentStory") !== null &&
+			localStorage.getItem("currentStory") !== "undefined"
+				? JSON.parse(localStorage.getItem("currentStory"))
+				: "";
+		set({ currentStory: currentStory });
 	},
 }));

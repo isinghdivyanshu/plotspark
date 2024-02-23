@@ -14,7 +14,7 @@ export default function CallModal({
 	areOpen,
 	onClose,
 }) {
-	const { setCurrentStory, darkMode } = useStore();
+	const { currentStory, setCurrentStory, darkMode } = useStore();
 
 	const customStyles = {
 		content: {
@@ -35,7 +35,18 @@ export default function CallModal({
 			backgroundColor: `${darkMode ? "#3b435e80" : "#dee4f784"}`,
 		},
 	};
-	if (modal === "character")
+
+	if (modal === "story") {
+		return (
+			<StoryModal
+				setCurrentStory={setCurrentStory}
+				isOpen={areOpen.storyModal === "true"}
+				onClose={onClose}
+				style={customStyles}
+				data={data}
+			/>
+		);
+	} else if (modal === "character")
 		return (
 			<CharacterModal
 				isOpen={areOpen.characterModal === "true"}
@@ -51,6 +62,16 @@ export default function CallModal({
 				onClose={onClose}
 				style={customStyles}
 				data={data}
+			/>
+		);
+	else if (modal === "addStory")
+		return (
+			<AddStoryModal
+				setCurrentStory={setCurrentStory}
+				setStories={setStories}
+				isOpen={areOpen.addStoryModal === "true"}
+				onClose={onClose}
+				style={customStyles}
 			/>
 		);
 	else if (modal === "addCharacter")
@@ -71,16 +92,157 @@ export default function CallModal({
 				data={data}
 			/>
 		);
-	else if (modal === "addStory")
-		return (
-			<AddStoryModal
-				setCurrentStory={setCurrentStory}
-				setStories={setStories}
-				isOpen={areOpen.addStoryModal === "true"}
-				onClose={onClose}
-				style={customStyles}
-			/>
-		);
+}
+
+function StoryModal({ data, setCurrentStory, isOpen, onClose, style }) {
+	const [oldStoryDetail, setOldStoryDetail] = useState({
+		title: data.title,
+		description: data.description,
+	});
+	const [newStoryDetail, setNewStoryDetail] = useState({
+		title: data.title,
+		description: data.description,
+	});
+
+	let { title: oldTitle, description: oldDescription } = oldStoryDetail;
+	let { title: newTitle, description: newDescription } = newStoryDetail;
+
+	oldTitle = oldTitle.trim().toLowerCase();
+	oldDescription = oldDescription.trim().toLowerCase();
+	newTitle = newTitle.trim().toLowerCase();
+	newDescription = newDescription.trim().toLowerCase();
+
+	return (
+		<Modal
+			isOpen={isOpen}
+			contentLabel="Story Modal"
+			style={style}
+			shouldCloseOnOverlayClick={false}
+			ariaHideApp={false}
+		>
+			<h1 className="flex justify-between items-center text-2xl font-bold bg-[#DEE4F7] px-10 py-3 align-bottom dark:bg-[#3B435E] dark:text-white">
+				Story Detail
+				<CloseTwoToneIcon
+					onClick={onClose}
+					className="cursor-pointer"
+				/>
+			</h1>
+			<form
+				onSubmit={
+					newTitle === oldTitle && newDescription === oldDescription
+						? onClose
+						: async (e) => {
+								e.preventDefault();
+								try {
+									const res = await axios.patch(
+										`/v1/stories/${data.id}`,
+										{
+											story_id: data.story_id,
+											title: newStoryDetail.title,
+											description:
+												newStoryDetail.description,
+										},
+										{
+											headers: {
+												Authorization: `Bearer ${localStorage.getItem(
+													"authToken"
+												)}`,
+											},
+										}
+									);
+									if (res.data.Story) {
+										setCurrentStory(res.data.Story);
+										toast.success("Story Updated");
+										onClose();
+									}
+								} catch (err) {
+									if (err?.response?.status === 422) {
+										toast.error(
+											"Story with same title already exists"
+										);
+									} else {
+										toast.error("Error Updating Story");
+										console.log(err);
+									}
+								}
+						  }
+				}
+				className="p-10 dark:text-white"
+				autoComplete="off"
+			>
+				<label htmlFor="title" className="flex flex-col gap-1">
+					Name
+					<input
+						type="text"
+						name="title"
+						id="title"
+						value={newStoryDetail.title}
+						onChange={(e) =>
+							setNewStoryDetail({
+								...newStoryDetail,
+								title: e.target.value,
+							})
+						}
+						placeholder="Add Title"
+						className="rounded-xl p-3 mb-3 dark:text-black border border-[#72659A] focus:outline-none"
+						required
+					/>
+				</label>
+				<label
+					htmlFor="description"
+					className="flex flex-col gap-1 my-4"
+				>
+					Description
+					<textarea
+						name="description"
+						id="description"
+						value={newStoryDetail.description}
+						onChange={(e) =>
+							setNewStoryDetail({
+								...newStoryDetail,
+								description: e.target.value,
+							})
+						}
+						placeholder="Add Description"
+						rows={3}
+						className="rounded-xl p-3 mb-3 dark:text-black border border-[#72659A] focus:outline-none"
+					/>
+				</label>
+				<button
+					type="submit"
+					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436]"
+				>
+					Save
+				</button>
+				<button
+					className="float-left w-32 text-xl bg-[#D31D8A] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#882962]"
+					onClick={async () => {
+						try {
+							const res = await axios.delete(
+								`v1/stories/${data.id}`,
+								{
+									headers: {
+										Authorization: `Bearer ${localStorage.getItem(
+											"authToken"
+										)}`,
+									},
+								}
+							);
+							if (res.data.message) {
+								setCurrentStory("");
+								toast.success("Story Deleted");
+							}
+						} catch (err) {
+							toast.error("Error Deleting Story");
+							console.log(err);
+						}
+					}}
+				>
+					Delete
+				</button>
+			</form>
+		</Modal>
+	);
 }
 
 function CharacterModal({ data, isOpen, onClose, style }) {
@@ -147,10 +309,17 @@ function CharacterModal({ data, isOpen, onClose, style }) {
 											newCharacterDetail
 										);
 										toast.success("Character Updated");
+										onClose();
 									}
 								} catch (err) {
-									toast.error("Error Updating Character");
-									console.log(err);
+									if (err?.response?.status === 422) {
+										toast.error(
+											"Character with same name already exists"
+										);
+									} else {
+										toast.error("Error Updating Character");
+										console.log(err);
+									}
 								}
 						  }
 				}
@@ -196,6 +365,12 @@ function CharacterModal({ data, isOpen, onClose, style }) {
 					/>
 				</label>
 				<button
+					type="submit"
+					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436]"
+				>
+					Save
+				</button>
+				<button
 					className="float-left w-32 text-xl bg-[#D31D8A] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#882962]"
 					onClick={async () => {
 						try {
@@ -218,12 +393,6 @@ function CharacterModal({ data, isOpen, onClose, style }) {
 					}}
 				>
 					Delete
-				</button>
-				<button
-					type="submit"
-					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436]"
-				>
-					Save
 				</button>
 			</form>
 		</Modal>
@@ -293,6 +462,7 @@ function EventModal({ data, isOpen, onClose, style }) {
 										await getCharsEvents();
 										setOldEventDetail(newEventDetail);
 										toast.success("Event Updated");
+										onClose();
 									}
 								} catch (err) {
 									toast.error("Error Updating Event");
@@ -342,6 +512,12 @@ function EventModal({ data, isOpen, onClose, style }) {
 					/>
 				</label>
 				<button
+					type="submit"
+					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436]"
+				>
+					Save
+				</button>
+				<button
 					className="float-left w-32 text-xl bg-[#D31D8A] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#882962]"
 					onClick={async () => {
 						try {
@@ -365,11 +541,124 @@ function EventModal({ data, isOpen, onClose, style }) {
 				>
 					Delete
 				</button>
+			</form>
+		</Modal>
+	);
+}
+
+function AddStoryModal({
+	setCurrentStory,
+	setStories,
+	isOpen,
+	onClose,
+	style,
+}) {
+	const [newStoryDetail, setNewStoryDetail] = useState({
+		title: "",
+		description: "",
+	});
+
+	return (
+		<Modal
+			isOpen={isOpen}
+			contentLabel="Add Story Modal"
+			style={style}
+			shouldCloseOnOverlayClick={false}
+			ariaHideApp={false}
+		>
+			<h1 className="flex justify-between items-center text-2xl font-bold bg-[#DEE4F7] px-10 py-3 align-bottom dark:bg-[#3B435E] dark:text-white">
+				Add Story
+				<CloseTwoToneIcon
+					onClick={onClose}
+					className="cursor-pointer"
+				/>
+			</h1>
+			<form
+				onSubmit={async (e) => {
+					e.preventDefault();
+					try {
+						const res = await axios.post(
+							"/v1/stories",
+							newStoryDetail,
+							{
+								headers: {
+									Authorization: `Bearer ${localStorage.getItem(
+										"authToken"
+									)}`,
+								},
+							}
+						);
+						const response = await axios.get("/v1/stories", {
+							headers: {
+								Authorization: `Bearer ${localStorage.getItem(
+									"authToken"
+								)}`,
+							},
+						});
+						if (response.data.stories) {
+							setStories(response.data.stories);
+						}
+						if (res.data.story) {
+							setCurrentStory(res.data.story);
+							toast.success("Story Added");
+							onClose();
+						}
+					} catch (err) {
+						if (err?.response?.status === 422) {
+							toast.error("Story with same title already exists");
+						} else {
+							toast.error("Error Adding Story");
+							console.log(err);
+						}
+					}
+				}}
+				className="p-10 dark:text-white"
+				autoComplete="off"
+			>
+				<label htmlFor="title" className="flex flex-col gap-1">
+					Title
+					<input
+						type="text"
+						name="title"
+						id="title"
+						value={newStoryDetail.title}
+						onChange={(e) =>
+							setNewStoryDetail({
+								...newStoryDetail,
+								title: e.target.value,
+							})
+						}
+						placeholder="Add Title"
+						className="rounded-xl p-3 mb-3 dark:text-black border border-[#72659A] focus:outline-none"
+						autoFocus
+						required
+					/>
+				</label>
+				<label
+					htmlFor="description"
+					className="flex flex-col gap-1 my-4"
+				>
+					Description
+					<textarea
+						name="description"
+						id="description"
+						value={newStoryDetail.description}
+						onChange={(e) =>
+							setNewStoryDetail({
+								...newStoryDetail,
+								description: e.target.value,
+							})
+						}
+						placeholder="Add Description"
+						rows={3}
+						className="rounded-xl p-3 mb-3 dark:text-black border border-[#72659A] focus:outline-none"
+					/>
+				</label>
 				<button
 					type="submit"
 					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436]"
 				>
-					Save
+					Add
 				</button>
 			</form>
 		</Modal>
@@ -424,7 +713,7 @@ function AddCharacterModal({ data, isOpen, onClose, style }) {
 							onClose();
 						}
 					} catch (err) {
-						if (err.response.status === 422) {
+						if (err?.response?.status === 422) {
 							toast.error(
 								"Character with same name already exists"
 							);
@@ -578,125 +867,6 @@ function AddEventModal({ data, isOpen, onClose, style }) {
 							})
 						}
 						placeholder="Type Here"
-						rows={3}
-						className="rounded-xl p-3 mb-3 dark:text-black border border-[#72659A] focus:outline-none"
-					/>
-				</label>
-				<button
-					type="submit"
-					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436]"
-				>
-					Add
-				</button>
-			</form>
-		</Modal>
-	);
-}
-
-function AddStoryModal({
-	setCurrentStory,
-	setStories,
-	isOpen,
-	onClose,
-	style,
-}) {
-	const [newStoryDetail, setNewStoryDetail] = useState({
-		title: "",
-		description: "",
-	});
-
-	return (
-		<Modal
-			isOpen={isOpen}
-			contentLabel="Add Story Modal"
-			style={style}
-			shouldCloseOnOverlayClick={false}
-			ariaHideApp={false}
-		>
-			<h1 className="flex justify-between items-center text-2xl font-bold bg-[#DEE4F7] px-10 py-3 align-bottom dark:bg-[#3B435E] dark:text-white">
-				Add Story
-				<CloseTwoToneIcon
-					onClick={onClose}
-					className="cursor-pointer"
-				/>
-			</h1>
-			<form
-				onSubmit={async (e) => {
-					e.preventDefault();
-					try {
-						const res = await axios.post(
-							"/v1/stories",
-							newStoryDetail,
-							{
-								headers: {
-									Authorization: `Bearer ${localStorage.getItem(
-										"authToken"
-									)}`,
-								},
-							}
-						);
-						const response = await axios.get("/v1/stories", {
-							headers: {
-								Authorization: `Bearer ${localStorage.getItem(
-									"authToken"
-								)}`,
-							},
-						});
-						if (response.data.stories) {
-							setStories(response.data.stories);
-						}
-						if (res.data.story) {
-							setCurrentStory(res.data.story);
-							toast.success("Story Added");
-							onClose();
-						}
-					} catch (err) {
-						if (err.response.status === 422) {
-							toast.error("Story with same title already exists");
-						} else {
-							toast.error("Error Adding Story");
-							console.log(err);
-						}
-					}
-				}}
-				className="p-10 dark:text-white"
-				autoComplete="off"
-			>
-				<label htmlFor="title" className="flex flex-col gap-1">
-					Title
-					<input
-						type="text"
-						name="title"
-						id="title"
-						value={newStoryDetail.title}
-						onChange={(e) =>
-							setNewStoryDetail({
-								...newStoryDetail,
-								title: e.target.value,
-							})
-						}
-						placeholder="Add Title"
-						className="rounded-xl p-3 mb-3 dark:text-black border border-[#72659A] focus:outline-none"
-						autoFocus
-						required
-					/>
-				</label>
-				<label
-					htmlFor="description"
-					className="flex flex-col gap-1 my-4"
-				>
-					Description
-					<textarea
-						name="description"
-						id="description"
-						value={newStoryDetail.description}
-						onChange={(e) =>
-							setNewStoryDetail({
-								...newStoryDetail,
-								description: e.target.value,
-							})
-						}
-						placeholder="Add Description"
 						rows={3}
 						className="rounded-xl p-3 mb-3 dark:text-black border border-[#72659A] focus:outline-none"
 					/>

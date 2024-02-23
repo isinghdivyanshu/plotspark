@@ -26,10 +26,12 @@ export default function TimelineNav() {
 	} = useStore();
 
 	const [stories, setStories] = useState([]);
+	const [modalData, setModalData] = useState("");
+	const [modalType, setModalType] = useState("");
 	const [isModalOpen, setIsModalOpen] = useState({
 		addStoryModal: "false",
+		storyModal: "false",
 	});
-	const [modalType, setModalType] = useState("");
 
 	// const [timelineActive, setTimelineActive] = useState(true);
 	// const [charactersActive, setCharactersActive] = useState(false);
@@ -57,14 +59,15 @@ export default function TimelineNav() {
 	}
 
 	useEffect(() => {
-		if (isLoggedIn) {
+		if (isLoggedIn && window.localStorage) {
 			getStories();
 		}
-	}, [isLoggedIn]);
+	}, [isLoggedIn, currentStory]);
 
 	const closeModal = () => {
 		setIsModalOpen({
 			addStoryModal: "false",
+			storyModal: "false",
 		});
 		setModalType("");
 	};
@@ -73,17 +76,43 @@ export default function TimelineNav() {
 		<>
 			<div className="flex bg-[#DEE4F7] py-2 px-5 justify-between  dark:bg-[#3b435e]">
 				<div className="flex gap-4">
-					<button
-						className="bg-white font-semibold text-3xl text-black p-1 w-fit h-fit rounded-sm hover:scale-105"
-						onClick={() => {
-							setIsModalOpen({
-								addStoryModal: "true",
-							}),
-								setModalType("addStory");
-						}}
-					>
-						<AddIcon />
-					</button>
+					<div className="dropdown relative">
+						<button className="bg-white font-semibold text-3xl text-black p-1 w-fit h-fit rounded-sm hover:scale-105">
+							<AddIcon />
+						</button>
+						<div className="dropdowncontent hidden absolute left-0 bg-[#adbbe8] dark:bg-slate-600 p-2 shadow-md shadow-[rgba(0, 0, 0, 0.2)] dark:shadow-[#898c8e] rounded-md">
+							<button
+								onClick={() => {
+									setIsModalOpen({
+										...isModalOpen,
+										storyModal: "true",
+									}),
+										setModalData({
+											id: currentStory.id,
+											title: currentStory.title,
+											description:
+												currentStory.description
+													? currentStory.description
+													: "",
+										}),
+										setModalType("story");
+								}}
+							>
+								Edit
+							</button>
+							<button
+								onClick={() => {
+									setIsModalOpen({
+										...isModalOpen,
+										addStoryModal: "true",
+									}),
+										setModalType("addStory");
+								}}
+							>
+								New
+							</button>
+						</div>
+					</div>
 					<select
 						className="py-1 px-5  bg-white rounded text-sm appearance-none cursor-pointer outline-none hover:scale-105 after:content-none after:path"
 						value={currentStory?.title}
@@ -194,6 +223,7 @@ export default function TimelineNav() {
 			<CallModal
 				setStories={setStories}
 				modal={modalType}
+				data={modalData}
 				areOpen={isModalOpen}
 				onClose={closeModal}
 			/>

@@ -16,7 +16,7 @@ export default function Navbar() {
 	const pathName = usePathname();
 
 	return (
-		<div className="bg-[#FFEAE2] dark:bg-[#3b435e] flex px-28 justify-between items-center p-4  dark:text-white">
+		<div className="bg-[#FFEAE2] dark:bg-[#3b435e] flex px-7 py-4  md:px-28 justify-between items-center  dark:text-white">
 			<div className="flex gap-12 justify-between items-center">
 				<span className="text-xl font-extrabold">Writer</span>
 				<ul className="flex gap-12">
@@ -43,21 +43,30 @@ export default function Navbar() {
 							fontSize="large"
 							className="hover:cursor-pointer dark:text-white"
 						/>
-						<div className="dropdowncontent hidden absolute right-0 bg-[#e9c3b4] dark:bg-slate-600 p-2 shadow-md shadow-[rgba(0, 0, 0, 0.2)] dark:shadow-[#898c8e] rounded-md">
-							<span className="text-gray-400 italic">User: </span>{" "}
-							<span className=" text-black border p-1 rounded border-gray-400 mb-2">
-								{email}
-							</span>
-							<button
-								onClick={() => {
-									logout(),
-										toast.success("Logged out"),
-										router.push("/");
-								}}
-								className="my-3 border border-black py-1 px-4 rounded"
-							>
-								Logout
-							</button>
+						<div className="dropdown-content hidden absolute -right-[25%] -bottom-[550%] rounded-md border border-[#0c1f5f] divide-y-2 divide-[#0c1f5f] bg-[#FFEAE2] dark:bg-[#3b435e] dark:border-[#a0b3f3] dark:divide-[#a0b3f3]">
+							<div className="w-full py-3">
+								<span className="text-gray-400 py-2 px-4">
+									User:{" "}
+								</span>{" "}
+								<span className=" rounded italic py-2 px-4">
+									{email}
+								</span>
+							</div>
+							<div className="w-full flex flex-col gap-3 px-5 text-center py-3">
+								<button className="border border-[#0c1f5f] py-2 px-4 rounded dark:border-[#a0b3f3] whitespace-nowrap">
+									Reset Password
+								</button>
+								<button
+									onClick={() => {
+										logout(),
+											toast.success("Logged out"),
+											router.push("/");
+									}}
+									className="border border-[#0c1f5f] py-2 px-4 rounded dark:border-[#a0b3f3]"
+								>
+									Logout
+								</button>
+							</div>
 						</div>
 					</div>
 				) : (

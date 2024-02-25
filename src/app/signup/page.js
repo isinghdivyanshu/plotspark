@@ -133,7 +133,7 @@ export default function Signup() {
 					<span>Log in</span>
 				</Link>
 			</div>
-			<div className="w-[60%] hidden lg:block h-[80%] rounded-s-xl border border-[#000000] border-r-0 overflow-hidden ml-16 shadow-[-4px_0px_100px_4px_rgba(0,0,0,0.25)] dark:shadow-[-4px_0px_100px_4px_rgba(255,255,255,0.1)] dark:border-[#ffffff]">
+			<div className="w-[60%] hidden md:block h-[80%] rounded-s-xl border border-[#000000] border-r-0 overflow-hidden ml-16 shadow-[-4px_0px_100px_4px_rgba(0,0,0,0.25)] dark:shadow-[-4px_0px_100px_4px_rgba(255,255,255,0.1)] dark:border-[#ffffff]">
 				<div className="bg-[#dfdce8] pt-2 pb-1 px-10 font-bold text-2xl dark:bg-[#202431]">
 					<div className="flex flex-col w-fit  items-center justify-center">
 						Timeline

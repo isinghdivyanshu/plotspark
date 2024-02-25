@@ -32,12 +32,14 @@ export default function TimelineNav() {
 		addStoryModal: "false",
 		storyModal: "false",
 	});
+	const [loading, setLoading] = useState("false");
 
 	// const [timelineActive, setTimelineActive] = useState(true);
 	// const [charactersActive, setCharactersActive] = useState(false);
 	// const [placesActive, setPlacesActive] = useState(false);
 
 	async function getStories() {
+		setLoading("true");
 		try {
 			const res = await axios.get("v1/stories", {
 				headers: {
@@ -51,10 +53,12 @@ export default function TimelineNav() {
 				setCurrentStory(
 					currentStory === "" ? res.data.stories[0] : currentStory
 				);
+				setLoading("false");
 			}
 		} catch (err) {
 			toast.error("Error Fetching Stories");
 			console.log(err?.response?.data?.detail);
+			setLoading("false");
 		}
 	}
 
@@ -75,28 +79,34 @@ export default function TimelineNav() {
 	return (
 		<>
 			<div className="flex bg-[#DEE4F7] py-2 px-5 justify-between  dark:bg-[#3b435e]">
-				<div className="flex gap-4">
+				<div className="flex gap-4 justify-center items-center">
 					<div className="dropdown relative">
-						<button className="bg-white font-semibold text-3xl text-black p-1 w-fit h-fit rounded-sm hover:scale-105">
-							<AddIcon />
+						<button className="bg-white font-semibold text-3xl text-black w-8 h-9 rounded-sm">
+							<AddIcon className="w-full aspect-square" />
 						</button>
-						<div className="dropdowncontent hidden absolute left-0 bg-[#adbbe8] dark:bg-slate-600 p-2 shadow-md shadow-[rgba(0, 0, 0, 0.2)] dark:shadow-[#898c8e] rounded-md">
+						<div className="dropdown-content hidden absolute -left-[25%] -bottom-[240%] rounded-md border border-[#3b435e] divide-y-2 divide-[#3b435e] bg-[#DEE4F7] dark:bg-[#3b435e] dark:border-white dark:divide-white">
 							<button
 								onClick={() => {
-									setIsModalOpen({
-										...isModalOpen,
-										storyModal: "true",
-									}),
-										setModalData({
-											id: currentStory.id,
-											title: currentStory.title,
-											description:
-												currentStory.description
-													? currentStory.description
-													: "",
+									if (stories.length === 0) {
+										toast.error("Add a story to edit");
+									} else {
+										setIsModalOpen({
+											...isModalOpen,
+											storyModal: "true",
 										}),
-										setModalType("story");
+											setModalData({
+												id: currentStory.id,
+												title: currentStory.title,
+												description:
+													currentStory.description
+														? currentStory.description
+														: "",
+											}),
+											setModalType("story");
+									}
 								}}
+								className="py-2 px-4 dark:text-white disabled:cursor-not-allowed disabled:opacity-50"
+								disabled={stories.length === 0}
 							>
 								Edit
 							</button>
@@ -108,14 +118,20 @@ export default function TimelineNav() {
 									}),
 										setModalType("addStory");
 								}}
+								className="py-2 px-4 dark:text-white"
 							>
 								New
 							</button>
 						</div>
 					</div>
 					<select
-						className="py-1 px-5  bg-white rounded text-sm appearance-none cursor-pointer outline-none hover:scale-105 after:content-none after:path"
-						value={currentStory?.title}
+						style={{ maxWidth: "200px" }}
+						className="py-1 px-5 h-9  bg-white rounded text-sm whitespace-nowrap text-center text-ellipsis overflow-hidden appearance-none cursor-pointer outline-none hover:scale-105 after:content-none after:path"
+						value={
+							stories.length === 0
+								? "No Stories"
+								: currentStory?.title
+						}
 						onChange={(e) => {
 							setCurrentStory(
 								stories.find(
@@ -124,8 +140,16 @@ export default function TimelineNav() {
 							);
 						}}
 					>
+						{stories.length === 0 ? (
+							<option disabled value="No Stories">
+								No Stories
+							</option>
+						) : null}
 						<ListStories />
 					</select>
+					{loading === "true" ? (
+						<div className="border-b-8 rounded-full border-[#D31D8A] bg-[#37B94D] animate-spin w-4 h-4"></div>
+					) : null}
 					{/* <div className="flex justify-center items-center gap-3">
 						<button
 							className={
@@ -195,23 +219,30 @@ export default function TimelineNav() {
 								fontSize="large"
 								className="hover:cursor-pointer dark:text-white"
 							/>
-							<div className="dropdowncontent hidden absolute right-0 bg-[#adbbe8] dark:bg-slate-600 p-2 shadow-md shadow-[rgba(0, 0, 0, 0.2)] dark:shadow-[#898c8e] rounded-md">
-								<span className="text-gray-400 italic">
-									User:{" "}
-								</span>{" "}
-								<span className=" text-black border p-1 rounded border-gray-400 mb-2">
-									{email}
-								</span>
-								<button
-									onClick={() => {
-										logout(),
-											toast.success("Logged out"),
-											router.push("/");
-									}}
-									className="my-3 border border-black py-1 px-4 rounded"
-								>
-									Logout
-								</button>
+							<div className="dropdown-content hidden absolute -right-[25%] -bottom-[550%] rounded-md border border-[#3b435e] divide-y-2 divide-[#3b435e] bg-[#DEE4F7] dark:bg-[#3b435e] dark:border-white dark:divide-white">
+								<div className="w-full py-3">
+									<span className="text-gray-400 py-2 px-4">
+										User:{" "}
+									</span>{" "}
+									<span className=" text-black rounded italic py-2 px-4 dark:text-white">
+										{email}
+									</span>
+								</div>
+								<div className="w-full flex flex-col gap-3 px-5 text-center py-3">
+									<button className="border border-[#3b435e] dark:border-white py-2 px-2 rounded dark:text-white whitespace-nowrap">
+										Reset Password
+									</button>
+									<button
+										onClick={() => {
+											logout(),
+												toast.success("Logged out"),
+												router.push("/");
+										}}
+										className="border border-[#3b435e] dark:border-white py-2 px-2 rounded dark:text-white"
+									>
+										Logout
+									</button>
+								</div>
 							</div>
 						</div>
 					) : null}

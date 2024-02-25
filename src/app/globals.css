@@ -7,7 +7,7 @@
 	src: url("/fonts/Mont-Black.ttf");
 }
 
-.dropdown:hover .dropdowncontent {
+.dropdown:hover .dropdown-content {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;

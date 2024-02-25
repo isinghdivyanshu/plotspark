@@ -101,7 +101,7 @@ function Timeline() {
 	let chapters = 0;
 
 	let y = 50;
-	let x = 100;
+	let x = 25;
 
 	function createNodesEdges() {
 		nodes.push({
@@ -299,24 +299,6 @@ function Timeline() {
 				});
 				x += 250;
 			}
-
-			y = 50;
-			x = 100;
-			nodes.push({
-				id: "addCharacterButton",
-				position: { x: x, y: y },
-				data: {
-					story_id: currentStory.id,
-					getCharsEvents: getCharsEvents,
-					isOpen: areModalsOpen,
-					setIsOpen: setAreModalsOpen,
-					onClose: closeModals,
-					modalData: modalData,
-					setModalData: setModalData,
-					setModalType: setModalType,
-				},
-				type: "addCharacterButton",
-			});
 		}
 	}
 	if (

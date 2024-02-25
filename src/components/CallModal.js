@@ -14,7 +14,7 @@ export default function CallModal({
 	areOpen,
 	onClose,
 }) {
-	const { currentStory, setCurrentStory, darkMode } = useStore();
+	const { setCurrentStory, darkMode } = useStore();
 
 	const customStyles = {
 		content: {
@@ -25,7 +25,7 @@ export default function CallModal({
 			marginRight: "-50%",
 			transform: "translate(-50%, -50%)",
 			backgroundColor: `${darkMode ? "#1a1d28" : "#ffffff"}`,
-			width: "45%",
+			width: "50%",
 			maxHeight: "90%",
 			border: `3px solid ${darkMode ? "#364370" : "#72659A"}`,
 			borderRadius: "10px",
@@ -103,6 +103,7 @@ function StoryModal({ data, setCurrentStory, isOpen, onClose, style }) {
 		title: data.title,
 		description: data.description,
 	});
+	const [loading, setLoading] = useState("false");
 
 	let { title: oldTitle, description: oldDescription } = oldStoryDetail;
 	let { title: newTitle, description: newDescription } = newStoryDetail;
@@ -121,18 +122,25 @@ function StoryModal({ data, setCurrentStory, isOpen, onClose, style }) {
 			ariaHideApp={false}
 		>
 			<h1 className="flex justify-between items-center text-2xl font-bold bg-[#DEE4F7] px-10 py-3 align-bottom dark:bg-[#3B435E] dark:text-white">
-				Story Detail
+				<span className="flex gap-5 items-center justify-center">
+					Story Detail{" "}
+					{loading === "true" ? (
+						<div className="border-b-8 rounded-full border-[#D31D8A] bg-[#37B94D] animate-spin w-4 h-4"></div>
+					) : null}
+				</span>
 				<CloseTwoToneIcon
 					onClick={onClose}
 					className="cursor-pointer"
 				/>
 			</h1>
+
 			<form
 				onSubmit={
 					newTitle === oldTitle && newDescription === oldDescription
 						? onClose
 						: async (e) => {
 								e.preventDefault();
+								setLoading("true");
 								try {
 									const res = await axios.patch(
 										`/v1/stories/${data.id}`,
@@ -160,9 +168,11 @@ function StoryModal({ data, setCurrentStory, isOpen, onClose, style }) {
 										toast.error(
 											"Story with same title already exists"
 										);
+										setLoading("false");
 									} else {
 										toast.error("Error Updating Story");
 										console.log(err);
+										setLoading("false");
 									}
 								}
 						  }
@@ -210,13 +220,16 @@ function StoryModal({ data, setCurrentStory, isOpen, onClose, style }) {
 				</label>
 				<button
 					type="submit"
-					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436]"
+					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-not-allowed disabled:opacity-50"
+					disabled={loading === "true"}
 				>
 					Save
 				</button>
 				<button
-					className="float-left w-32 text-xl bg-[#D31D8A] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#882962]"
-					onClick={async () => {
+					className="float-left w-32 text-xl bg-[#D31D8A] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#882962] disabled:cursor-not-allowed disabled:opacity-50"
+					onClick={async (e) => {
+						e.preventDefault();
+						setLoading("true");
 						try {
 							const res = await axios.delete(
 								`v1/stories/${data.id}`,
@@ -231,12 +244,15 @@ function StoryModal({ data, setCurrentStory, isOpen, onClose, style }) {
 							if (res.data.message) {
 								setCurrentStory("");
 								toast.success("Story Deleted");
+								onClose();
 							}
 						} catch (err) {
 							toast.error("Error Deleting Story");
 							console.log(err);
+							setLoading("false");
 						}
 					}}
+					disabled={loading === "true"}
 				>
 					Delete
 				</button>
@@ -254,6 +270,7 @@ function CharacterModal({ data, isOpen, onClose, style }) {
 		name: data.name,
 		description: data.description,
 	});
+	const [loading, setLoading] = useState("false");
 
 	const getCharsEvents = data.getCharsEvents;
 
@@ -274,7 +291,12 @@ function CharacterModal({ data, isOpen, onClose, style }) {
 			ariaHideApp={false}
 		>
 			<h1 className="flex justify-between items-center text-2xl font-bold bg-[#DEE4F7] px-10 py-3 align-bottom dark:bg-[#3B435E] dark:text-white">
-				Character Detail
+				<span className="flex gap-5 items-center justify-center">
+					Story Detail{" "}
+					{loading === "true" ? (
+						<div className="border-b-8 rounded-full border-[#D31D8A] bg-[#37B94D] animate-spin w-4 h-4"></div>
+					) : null}
+				</span>
 				<CloseTwoToneIcon
 					onClick={onClose}
 					className="cursor-pointer"
@@ -286,6 +308,7 @@ function CharacterModal({ data, isOpen, onClose, style }) {
 						? onClose
 						: async (e) => {
 								e.preventDefault();
+								setLoading("true");
 								try {
 									const res = await axios.patch(
 										`/v1/characters/${data.id}`,
@@ -316,9 +339,11 @@ function CharacterModal({ data, isOpen, onClose, style }) {
 										toast.error(
 											"Character with same name already exists"
 										);
+										setLoading("false");
 									} else {
 										toast.error("Error Updating Character");
 										console.log(err);
+										setLoading("false");
 									}
 								}
 						  }
@@ -366,13 +391,16 @@ function CharacterModal({ data, isOpen, onClose, style }) {
 				</label>
 				<button
 					type="submit"
-					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436]"
+					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-not-allowed disabled:opacity-50"
+					disabled={loading === "true"}
 				>
 					Save
 				</button>
 				<button
-					className="float-left w-32 text-xl bg-[#D31D8A] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#882962]"
-					onClick={async () => {
+					className="float-left w-32 text-xl bg-[#D31D8A] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#882962] disabled:cursor-not-allowed disabled:opacity-50"
+					onClick={async (e) => {
+						e.preventDefault();
+						setLoading("true");
 						try {
 							const res = await axios.delete(
 								`v1/characters/${data.id}`,
@@ -385,12 +413,15 @@ function CharacterModal({ data, isOpen, onClose, style }) {
 							if (res.data.message) {
 								await getCharsEvents();
 								toast.success("Character Deleted");
+								onClose();
 							}
 						} catch (err) {
+							setLoading("false");
 							toast.error("Error Deleting Character");
 							console.log(err);
 						}
 					}}
+					disabled={loading === "true"}
 				>
 					Delete
 				</button>
@@ -408,6 +439,7 @@ function EventModal({ data, isOpen, onClose, style }) {
 		title: data.title,
 		description: data.description,
 	});
+	const [loading, setLoading] = useState("false");
 
 	const getCharsEvents = data.getCharsEvents;
 
@@ -428,7 +460,12 @@ function EventModal({ data, isOpen, onClose, style }) {
 			ariaHideApp={false}
 		>
 			<h1 className="flex justify-between items-center text-2xl font-bold bg-[#DEE4F7] px-10 py-3 align-bottom dark:bg-[#3B435E] dark:text-white">
-				Event Detail
+				<span className="flex gap-5 items-center justify-center">
+					Event Detail{" "}
+					{loading === "true" ? (
+						<div className="border-b-8 rounded-full border-[#D31D8A] bg-[#37B94D] animate-spin w-4 h-4"></div>
+					) : null}
+				</span>
 				<CloseTwoToneIcon
 					onClick={onClose}
 					className="cursor-pointer"
@@ -440,6 +477,7 @@ function EventModal({ data, isOpen, onClose, style }) {
 						? onClose
 						: async (e) => {
 								e.preventDefault();
+								setLoading("true");
 								try {
 									const res = await axios.patch(
 										`/v1/events/${data.id}`,
@@ -466,6 +504,7 @@ function EventModal({ data, isOpen, onClose, style }) {
 									}
 								} catch (err) {
 									toast.error("Error Updating Event");
+									setLoading("false");
 									console.log(err);
 								}
 						  }
@@ -513,13 +552,16 @@ function EventModal({ data, isOpen, onClose, style }) {
 				</label>
 				<button
 					type="submit"
-					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436]"
+					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-not-allowed disabled:opacity-50"
+					disabled={loading === "true"}
 				>
 					Save
 				</button>
 				<button
-					className="float-left w-32 text-xl bg-[#D31D8A] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#882962]"
-					onClick={async () => {
+					className="float-left w-32 text-xl bg-[#D31D8A] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#882962] disabled:cursor-not-allowed disabled:opacity-50"
+					onClick={async (e) => {
+						e.preventDefault();
+						setLoading("true");
 						try {
 							const res = await axios.delete(
 								`v1/events/${data.id}`,
@@ -532,12 +574,15 @@ function EventModal({ data, isOpen, onClose, style }) {
 							if (res.data.message) {
 								await getCharsEvents();
 								toast.success("Event Deleted");
+								onClose();
 							}
 						} catch (err) {
 							toast.error("Error Deleting Event");
+							setLoading("false");
 							console.log(err);
 						}
 					}}
+					disabled={loading === "true"}
 				>
 					Delete
 				</button>
@@ -557,6 +602,7 @@ function AddStoryModal({
 		title: "",
 		description: "",
 	});
+	const [loading, setLoading] = useState("false");
 
 	return (
 		<Modal
@@ -567,7 +613,12 @@ function AddStoryModal({
 			ariaHideApp={false}
 		>
 			<h1 className="flex justify-between items-center text-2xl font-bold bg-[#DEE4F7] px-10 py-3 align-bottom dark:bg-[#3B435E] dark:text-white">
-				Add Story
+				<span className="flex gap-5 items-center justify-center">
+					Add Story{" "}
+					{loading === "true" ? (
+						<div className="border-b-8 rounded-full border-[#D31D8A] bg-[#37B94D] animate-spin w-4 h-4"></div>
+					) : null}
+				</span>
 				<CloseTwoToneIcon
 					onClick={onClose}
 					className="cursor-pointer"
@@ -576,6 +627,7 @@ function AddStoryModal({
 			<form
 				onSubmit={async (e) => {
 					e.preventDefault();
+					setLoading("true");
 					try {
 						const res = await axios.post(
 							"/v1/stories",
@@ -606,8 +658,10 @@ function AddStoryModal({
 					} catch (err) {
 						if (err?.response?.status === 422) {
 							toast.error("Story with same title already exists");
+							setLoading("false");
 						} else {
 							toast.error("Error Adding Story");
+							setLoading("false");
 							console.log(err);
 						}
 					}
@@ -656,7 +710,8 @@ function AddStoryModal({
 				</label>
 				<button
 					type="submit"
-					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436]"
+					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-not-allowed disabled:opacity-50"
+					disabled={loading === "true"}
 				>
 					Add
 				</button>
@@ -670,6 +725,7 @@ function AddCharacterModal({ data, isOpen, onClose, style }) {
 		name: "",
 		description: "",
 	});
+	const [loading, setLoading] = useState("false");
 
 	const getCharsEvents = data.getCharsEvents;
 
@@ -682,7 +738,12 @@ function AddCharacterModal({ data, isOpen, onClose, style }) {
 			ariaHideApp={false}
 		>
 			<h1 className="flex justify-between items-center text-2xl font-bold bg-[#DEE4F7] px-10 py-3 align-bottom dark:bg-[#3B435E] dark:text-white">
-				Add Character
+				<span className="flex gap-5 items-center justify-center">
+					Add Character{" "}
+					{loading === "true" ? (
+						<div className="border-b-8 rounded-full border-[#D31D8A] bg-[#37B94D] animate-spin w-4 h-4"></div>
+					) : null}
+				</span>
 				<CloseTwoToneIcon
 					onClick={onClose}
 					className="cursor-pointer"
@@ -691,6 +752,7 @@ function AddCharacterModal({ data, isOpen, onClose, style }) {
 			<form
 				onSubmit={async (e) => {
 					e.preventDefault();
+					setLoading("true");
 					try {
 						const res = await axios.post(
 							"/v1/characters",
@@ -717,8 +779,10 @@ function AddCharacterModal({ data, isOpen, onClose, style }) {
 							toast.error(
 								"Character with same name already exists"
 							);
+							setLoading("false");
 						} else {
 							toast.error("Error Adding Character");
+							setLoading("false");
 							console.log(err);
 						}
 					}
@@ -767,7 +831,8 @@ function AddCharacterModal({ data, isOpen, onClose, style }) {
 				</label>
 				<button
 					type="submit"
-					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436]"
+					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-not-allowed disabled:opacity-50"
+					disabled={loading === "true"}
 				>
 					Add
 				</button>
@@ -781,6 +846,7 @@ function AddEventModal({ data, isOpen, onClose, style }) {
 		title: "",
 		description: "",
 	});
+	const [loading, setLoading] = useState("false");
 
 	const getCharsEvents = data.getCharsEvents;
 
@@ -793,7 +859,12 @@ function AddEventModal({ data, isOpen, onClose, style }) {
 			ariaHideApp={false}
 		>
 			<h1 className="flex justify-between items-center text-2xl font-bold bg-[#DEE4F7] px-10 py-3 align-bottom dark:bg-[#3B435E] dark:text-white">
-				Add Event
+				<span className="flex gap-5 items-center justify-center">
+					Add Event{" "}
+					{loading === "true" ? (
+						<div className="border-b-8 rounded-full border-[#D31D8A] bg-[#37B94D] animate-spin w-4 h-4"></div>
+					) : null}
+				</span>
 				<CloseTwoToneIcon
 					onClick={onClose}
 					className="cursor-pointer"
@@ -802,6 +873,7 @@ function AddEventModal({ data, isOpen, onClose, style }) {
 			<form
 				onSubmit={async (e) => {
 					e.preventDefault();
+					setLoading("true");
 					try {
 						const res = await axios.post(
 							"/v1/events",
@@ -826,6 +898,7 @@ function AddEventModal({ data, isOpen, onClose, style }) {
 						}
 					} catch (err) {
 						toast.error("Error Adding Event");
+						setLoading("false");
 						console.log(err);
 					}
 				}}
@@ -873,7 +946,8 @@ function AddEventModal({ data, isOpen, onClose, style }) {
 				</label>
 				<button
 					type="submit"
-					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436]"
+					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-not-allowed disabled:opacity-50"
+					disabled={loading === "true"}
 				>
 					Add
 				</button>

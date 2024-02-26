@@ -17,6 +17,7 @@ export default function Login() {
 
 	const [formData, setFormData] = useState({ email: "", password: "" });
 	const [showPassword, setShowPassword] = useState(false);
+	const [loading, setLoading] = useState("false");
 	// const hrStyle = {
 	// 	backgroundColor:
 	// 		localStorage.getItem("theme") === "dark" ? "#d1d1d1" : "#7979794d",
@@ -104,7 +105,8 @@ export default function Login() {
 					</label>
 					<button
 						type="submit"
-						className="w-full bg-[#0c1f5f] p-3 rounded-xl text-white mb-16 font-bold dark:bg-[#a0b3f3]"
+						className="w-full bg-[#0c1f5f] p-3 rounded-xl text-white mb-16 font-bold dark:bg-[#a0b3f3] disabled:cursor-not-allowed disabled:opacity-50"
+						disabled={loading === "true"}
 					>
 						Log In
 					</button>
@@ -131,6 +133,7 @@ export default function Login() {
 	async function handleSubmit(e) {
 		e.preventDefault();
 
+		setLoading("true");
 		try {
 			const res = await axios.post("/v1/tokens/authentication", formData);
 			if (res.data && !res.data.activated) {
@@ -157,13 +160,16 @@ export default function Login() {
 		} catch (err) {
 			if (err?.response?.status === 401) {
 				toast.error("Incorrect Email/Password");
+				setLoading("false");
 			} else if (err?.response?.status === 422) {
+				setLoading("false");
 				toast.error(
 					"Email must be valid & Password must be at least 8 chars"
 				);
 			} else {
 				console.log(err);
 				toast.error(err?.response?.data?.detail);
+				setLoading("false");
 			}
 		}
 	}

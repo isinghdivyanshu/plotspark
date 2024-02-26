@@ -2,11 +2,15 @@
 
 import axios from "@/app/axios";
 import { useStore } from "@/app/store";
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import EmailIcon from "@mui/icons-material/Email";
 
 export default function Activation() {
+	const router = useRouter();
 	const { email } = useStore();
+
+	const [loading, setLoading] = useState("false");
 
 	let token = "";
 
@@ -24,6 +28,8 @@ export default function Activation() {
 			<form
 				onSubmit={async (e) => {
 					e.preventDefault();
+
+					setLoading("true");
 					try {
 						const res = await axios.put("v1/users/activated", {
 							token: token,
@@ -32,10 +38,12 @@ export default function Activation() {
 							toast.success(
 								"Activation Successful. Login Again."
 							);
+							router.replace("/login");
 						}
 					} catch (err) {
 						toast.error("Wrong Token");
 						console.log(err);
+						setLoading("false");
 					}
 				}}
 				className="flex flex-wrap gap-5 justify-center items-center m-7"
@@ -53,7 +61,8 @@ export default function Activation() {
 				></input>
 				<button
 					type="submit"
-					className="py-2 px-7 bg-[#0C1F5F] rounded-md text-white font-medium text-base  dark:bg-[#A0B3F3]"
+					className="py-2 px-7 bg-[#0C1F5F] rounded-md text-white font-medium text-base  dark:bg-[#A0B3F3] disabled:cursor-not-allowed disabled:opacity-50"
+					disabled={loading === "true"}
 				>
 					Submit Token
 				</button>
@@ -62,8 +71,9 @@ export default function Activation() {
 				Still can’t find the email? No problem.
 			</p>
 			<button
-				className="py-2 px-7 bg-[#0C1F5F] rounded-md text-white font-medium text-base dark:bg-[#A0B3F3]"
+				className="py-2 px-7 bg-[#0C1F5F] rounded-md text-white font-medium text-base dark:bg-[#A0B3F3] disabled:cursor-not-allowed disabled:opacity-50"
 				onClick={async () => {
+					setLoading("true");
 					try {
 						const response = await axios.post(
 							"/v1/tokens/activation",
@@ -75,9 +85,12 @@ export default function Activation() {
 							toast.info("Resent Verification Email.");
 						}
 					} catch (err) {
+						toast.error("Error Resending Verification Email.");
+						setLoading("false");
 						console.log(err);
 					}
 				}}
+				disabled={loading === "true"}
 			>
 				Resend Verification Mail
 			</button>

@@ -20,8 +20,8 @@ export default function Signup() {
 		email: "",
 		password: "",
 	});
-
 	const [showPassword, setShowPassword] = useState(false);
+	const [loading, setLoading] = useState("false");
 
 	// const style = {
 	// 	backgroundColor:
@@ -121,7 +121,8 @@ export default function Signup() {
 					</label>
 					<button
 						type="submit"
-						className="w-full bg-[#0c1f5f] p-3 rounded-xl text-white mb-16 font-bold dark:bg-[#a0b3f3]"
+						className="w-full bg-[#0c1f5f] p-3 rounded-xl text-white mb-16 font-bold dark:bg-[#a0b3f3] disabled:cursor-not-allowed disabled:opacity-50"
+						disabled={loading === "true"}
 					>
 						Sign Up
 					</button>
@@ -148,6 +149,7 @@ export default function Signup() {
 	async function handleSubmit(e) {
 		e.preventDefault();
 
+		setLoading("true");
 		try {
 			const res = await axios.post("/v1/users/", formData);
 			if (res.data) {
@@ -166,9 +168,11 @@ export default function Signup() {
 		} catch (err) {
 			if (err?.response?.status === 422) {
 				toast.error("Email already exists. Please login.");
+				setLoading("false");
 			} else {
 				toast.error(err?.response?.data?.detail);
 				console.log(err);
+				setLoading("false");
 			}
 		}
 	}

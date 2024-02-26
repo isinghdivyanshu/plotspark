@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useStore } from "@/app/store";
 import axios from "../app/axios";
 import { toast } from "react-toastify";
+import useScreenWidth from "@/app/hooks/useScreenWidth";
 import Modal from "react-modal";
 import CloseTwoToneIcon from "@mui/icons-material/CloseTwoTone";
 
@@ -15,6 +16,17 @@ export default function CallModal({
 	onClose,
 }) {
 	const { setCurrentStory, darkMode } = useStore();
+	const windowWidth = useScreenWidth();
+	const mobileWidth = 425;
+	console.log(windowWidth <= mobileWidth);
+	console.log(windowWidth > mobileWidth);
+
+	let modalWidth;
+	if (windowWidth && windowWidth <= mobileWidth) {
+		modalWidth = "90%";
+	} else if (windowWidth && windowWidth > mobileWidth) {
+		modalWidth = "50%";
+	}
 
 	const customStyles = {
 		content: {
@@ -25,7 +37,7 @@ export default function CallModal({
 			marginRight: "-50%",
 			transform: "translate(-50%, -50%)",
 			backgroundColor: `${darkMode ? "#1a1d28" : "#ffffff"}`,
-			width: "50%",
+			width: { modalWidth },
 			maxHeight: "90%",
 			border: `3px solid ${darkMode ? "#364370" : "#72659A"}`,
 			borderRadius: "10px",
@@ -334,15 +346,15 @@ function CharacterModal({ data, isOpen, onClose, style }) {
 										toast.success("Character Updated");
 										onClose();
 									}
-								} catch (err) {
-									if (err?.response?.status === 422) {
+								} catch (error) {
+									if (error.response?.status === 422) {
 										toast.error(
 											"Character with same name already exists"
 										);
 										setLoading("false");
 									} else {
 										toast.error("Error Updating Character");
-										console.log(err);
+										console.log(error);
 										setLoading("false");
 									}
 								}
@@ -803,7 +815,7 @@ function AddCharacterModal({ data, isOpen, onClose, style }) {
 								name: e.target.value,
 							})
 						}
-						placeholder="Type Here"
+						placeholder="Add Name"
 						className="rounded-xl p-3 mb-3 dark:text-black border border-[#72659A] focus:outline-none"
 						autoFocus
 						required
@@ -824,7 +836,7 @@ function AddCharacterModal({ data, isOpen, onClose, style }) {
 								description: e.target.value,
 							})
 						}
-						placeholder="Type Here"
+						placeholder="Add Description"
 						rows={3}
 						className="rounded-xl p-3 mb-3 dark:text-black border border-[#72659A] focus:outline-none"
 					/>
@@ -918,7 +930,7 @@ function AddEventModal({ data, isOpen, onClose, style }) {
 								title: e.target.value,
 							})
 						}
-						placeholder="Type Here"
+						placeholder="Add Title"
 						className="rounded-xl p-3 mb-3 dark:text-black border border-[#72659A] focus:outline-none"
 						autoFocus
 						required
@@ -939,7 +951,7 @@ function AddEventModal({ data, isOpen, onClose, style }) {
 								description: e.target.value,
 							})
 						}
-						placeholder="Type Here"
+						placeholder="Add Description"
 						rows={3}
 						className="rounded-xl p-3 mb-3 dark:text-black border border-[#72659A] focus:outline-none"
 					/>

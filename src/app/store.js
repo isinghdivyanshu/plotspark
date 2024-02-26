@@ -37,13 +37,7 @@ export const useStore = create((set) => ({
 		set((state) => ({ darkMode: !state.darkMode }));
 	},
 
-	currentStory:
-		typeof window !== "undefined" &&
-		localStorage.getItem("currentStory") !== "" &&
-		localStorage.getItem("currentStory") !== null &&
-		localStorage.getItem("currentStory") !== "undefined"
-			? JSON.parse(localStorage.getItem("currentStory"))
-			: "",
+	currentStory: "",
 	setCurrentStory: (storyObject) => {
 		localStorage.setItem("currentStory", JSON.stringify(storyObject));
 		set({
@@ -65,12 +59,18 @@ export const useStore = create((set) => ({
 			set({ email: userEmail });
 		}
 
-		const currentStory =
-			localStorage.getItem("currentStory") !== "" &&
-			localStorage.getItem("currentStory") !== null &&
-			localStorage.getItem("currentStory") !== "undefined"
-				? JSON.parse(localStorage.getItem("currentStory"))
-				: "";
-		set({ currentStory: currentStory });
+		const currentStory = localStorage.getItem("currentStory");
+		if (currentStory) {
+			set({ currentStory: JSON.parse(currentStory) });
+		} else {
+			localStorage.setItem("currentStory", "");
+		}
+
+		const darkMode = localStorage.getItem("darkMode");
+		if (darkMode) {
+			set({ darkMode: JSON.parse(darkMode) });
+		} else {
+			localStorage.setItem("darkMode", true);
+		}
 	},
 }));

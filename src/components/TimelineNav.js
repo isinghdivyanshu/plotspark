@@ -55,9 +55,9 @@ export default function TimelineNav() {
 				);
 				setLoading("false");
 			}
-		} catch (err) {
+		} catch (error) {
 			toast.error("Error Fetching Stories");
-			console.log(err?.response?.data?.detail);
+			console.log(error.response?.data?.detail);
 			setLoading("false");
 		}
 	}

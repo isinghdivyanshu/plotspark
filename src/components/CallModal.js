@@ -6,6 +6,8 @@ import axios from "../app/axios";
 import { toast } from "react-toastify";
 import useScreenWidth from "@/app/hooks/useScreenWidth";
 import Modal from "react-modal";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import CloseTwoToneIcon from "@mui/icons-material/CloseTwoTone";
 
 export default function CallModal({
@@ -17,16 +19,8 @@ export default function CallModal({
 }) {
 	const { setCurrentStory, darkMode } = useStore();
 	const windowWidth = useScreenWidth();
-	const mobileWidth = 425;
-	console.log(windowWidth <= mobileWidth);
-	console.log(windowWidth > mobileWidth);
-
-	let modalWidth;
-	if (windowWidth && windowWidth <= mobileWidth) {
-		modalWidth = "90%";
-	} else if (windowWidth && windowWidth > mobileWidth) {
-		modalWidth = "50%";
-	}
+	const mobileWidth = 570;
+	const check = windowWidth > mobileWidth;
 
 	const customStyles = {
 		content: {
@@ -37,7 +31,7 @@ export default function CallModal({
 			marginRight: "-50%",
 			transform: "translate(-50%, -50%)",
 			backgroundColor: `${darkMode ? "#1a1d28" : "#ffffff"}`,
-			width: { modalWidth },
+			width: `${check ? "50%" : "90%"}`,
 			maxHeight: "90%",
 			border: `3px solid ${darkMode ? "#364370" : "#72659A"}`,
 			borderRadius: "10px",
@@ -99,6 +93,23 @@ export default function CallModal({
 		return (
 			<AddEventModal
 				isOpen={areOpen.addEventModal === "true"}
+				onClose={onClose}
+				style={customStyles}
+				data={data}
+			/>
+		);
+	else if (modal === "newPassword")
+		return (
+			<NewPasswordModal
+				isOpen={areOpen.newPasswordModal === "true"}
+				onClose={onClose}
+				style={customStyles}
+			/>
+		);
+	else if (modal === "forgotPassword")
+		return (
+			<ForgotPasswordModal
+				isOpen={areOpen.forgotPasswordModal === "true"}
 				onClose={onClose}
 				style={customStyles}
 				data={data}
@@ -232,13 +243,13 @@ function StoryModal({ data, setCurrentStory, isOpen, onClose, style }) {
 				</label>
 				<button
 					type="submit"
-					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-not-allowed disabled:opacity-50"
+					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-progress disabled:opacity-50"
 					disabled={loading === "true"}
 				>
 					Save
 				</button>
 				<button
-					className="float-left w-32 text-xl bg-[#D31D8A] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#882962] disabled:cursor-not-allowed disabled:opacity-50"
+					className="float-left w-32 text-xl bg-[#D31D8A] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#882962] disabled:cursor-progress disabled:opacity-50"
 					onClick={async (e) => {
 						e.preventDefault();
 						setLoading("true");
@@ -403,13 +414,13 @@ function CharacterModal({ data, isOpen, onClose, style }) {
 				</label>
 				<button
 					type="submit"
-					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-not-allowed disabled:opacity-50"
+					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-progress disabled:opacity-50"
 					disabled={loading === "true"}
 				>
 					Save
 				</button>
 				<button
-					className="float-left w-32 text-xl bg-[#D31D8A] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#882962] disabled:cursor-not-allowed disabled:opacity-50"
+					className="float-left w-32 text-xl bg-[#D31D8A] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#882962] disabled:cursor-progress disabled:opacity-50"
 					onClick={async (e) => {
 						e.preventDefault();
 						setLoading("true");
@@ -564,13 +575,13 @@ function EventModal({ data, isOpen, onClose, style }) {
 				</label>
 				<button
 					type="submit"
-					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-not-allowed disabled:opacity-50"
+					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-progress disabled:opacity-50"
 					disabled={loading === "true"}
 				>
 					Save
 				</button>
 				<button
-					className="float-left w-32 text-xl bg-[#D31D8A] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#882962] disabled:cursor-not-allowed disabled:opacity-50"
+					className="float-left w-32 text-xl bg-[#D31D8A] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#882962] disabled:cursor-progress disabled:opacity-50"
 					onClick={async (e) => {
 						e.preventDefault();
 						setLoading("true");
@@ -722,7 +733,7 @@ function AddStoryModal({
 				</label>
 				<button
 					type="submit"
-					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-not-allowed disabled:opacity-50"
+					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-progress disabled:opacity-50"
 					disabled={loading === "true"}
 				>
 					Add
@@ -843,7 +854,7 @@ function AddCharacterModal({ data, isOpen, onClose, style }) {
 				</label>
 				<button
 					type="submit"
-					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-not-allowed disabled:opacity-50"
+					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-progress disabled:opacity-50"
 					disabled={loading === "true"}
 				>
 					Add
@@ -958,10 +969,212 @@ function AddEventModal({ data, isOpen, onClose, style }) {
 				</label>
 				<button
 					type="submit"
-					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-not-allowed disabled:opacity-50"
+					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-progress disabled:opacity-50"
 					disabled={loading === "true"}
 				>
 					Add
+				</button>
+			</form>
+		</Modal>
+	);
+}
+
+function NewPasswordModal({ isOpen, onClose, style }) {
+	const [password, setPassword] = useState("");
+	const [resetToken, setResetToken] = useState("");
+	const [showPassword, setShowPassword] = useState(false);
+	const [loading, setLoading] = useState("false");
+
+	return (
+		<Modal
+			isOpen={isOpen}
+			contentLabel="New Password Modal"
+			style={style}
+			shouldCloseOnOverlayClick={false}
+			ariaHideApp={false}
+		>
+			<h1 className="flex justify-between items-center text-2xl font-bold bg-[#DEE4F7] px-10 py-3 align-bottom dark:bg-[#3B435E] dark:text-white">
+				<span className="flex gap-5 items-center justify-center">
+					New Password{" "}
+					{loading === "true" ? (
+						<div className="border-b-8 rounded-full border-[#D31D8A] bg-[#37B94D] animate-spin w-4 h-4"></div>
+					) : null}
+				</span>
+				<CloseTwoToneIcon
+					onClick={onClose}
+					className="cursor-pointer"
+				/>
+			</h1>
+			<form
+				onSubmit={async (e) => {
+					e.preventDefault();
+
+					setLoading("true");
+					try {
+						const res = await axios.put("/v1/users/password", {
+							password: password,
+							token: resetToken,
+						});
+						if (res.data.message) {
+							toast.success("Password Reset Successful");
+							onClose();
+						}
+					} catch (error) {
+						if (error?.response?.status === 422) {
+							toast.error("Invalid Reset Token");
+							setResetToken("");
+							setLoading("false");
+						} else {
+							toast.error("Error Resetting Password");
+							setLoading("false");
+							console.log(error);
+						}
+					}
+				}}
+				className="p-10 dark:text-white"
+				autoComplete="off"
+			>
+				<label htmlFor="password" className="flex flex-col gap-1">
+					Password
+					<div className="relative">
+						<input
+							type={showPassword ? "text" : "password"}
+							name="password"
+							id="password"
+							value={password}
+							onChange={(e) => {
+								setPassword(e.target.value);
+							}}
+							minLength={8}
+							placeholder="New Password Here"
+							className="w-full rounded-xl p-3 mb-3 dark:text-black border border-[#72659A] focus:outline-none"
+							autoFocus
+							required
+						/>
+						{!showPassword ? (
+							<VisibilityIcon
+								onClick={() => {
+									setShowPassword(!showPassword);
+								}}
+								className="absolute cursor-pointer right-2 top-3 dark:text-black"
+							/>
+						) : (
+							<VisibilityOffIcon
+								onClick={() => {
+									setShowPassword(!showPassword);
+								}}
+								className="absolute cursor-pointer right-2 top-3 dark:text-black"
+							/>
+						)}
+					</div>
+					<label htmlFor="token" className="flex flex-col gap-1">
+						Reset Token
+						<input
+							type="text"
+							name="resetToken"
+							id="resetToken"
+							value={resetToken}
+							onChange={(e) => {
+								setResetToken(e.target.value);
+							}}
+							maxLength={6}
+							minLength={6}
+							placeholder="Reset Token Here"
+							className="rounded-xl p-3 mb-3 dark:text-black border border-[#72659A] focus:outline-none"
+							autoComplete="off"
+							required
+						/>
+					</label>
+				</label>
+				<button
+					type="submit"
+					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-progress disabled:opacity-50"
+					disabled={loading === "true"}
+				>
+					Reset
+				</button>
+			</form>
+		</Modal>
+	);
+}
+
+function ForgotPasswordModal({ data, isOpen, onClose, style }) {
+	const [email, setEmail] = useState("");
+	const [loading, setLoading] = useState("false");
+
+	return (
+		<Modal
+			isOpen={isOpen}
+			contentLabel="Forgot Password Modal"
+			style={style}
+			shouldCloseOnOverlayClick={false}
+			ariaHideApp={false}
+		>
+			<h1 className="flex justify-between items-center text-2xl font-bold bg-[#DEE4F7] px-10 py-3 align-bottom dark:bg-[#3B435E] dark:text-white">
+				<span className="flex gap-5 items-center justify-center">
+					Forgot Password{" "}
+					{loading === "true" ? (
+						<div className="border-b-8 rounded-full border-[#D31D8A] bg-[#37B94D] animate-spin w-4 h-4"></div>
+					) : null}
+				</span>
+				<CloseTwoToneIcon
+					onClick={onClose}
+					className="cursor-pointer"
+				/>
+			</h1>
+			<form
+				onSubmit={async (e) => {
+					e.preventDefault();
+
+					setLoading("true");
+					try {
+						const res = await axios.post(
+							"/v1/tokens/password-reset",
+							{
+								email: email,
+							}
+						);
+						if (res.data.message) {
+							toast.info("Email with reset token sent.");
+							setLoading("false");
+							onClose();
+							data.setIsModalOpen({
+								...data.isModalOpen,
+								newPasswordModal: "true",
+							});
+							data.setModalType("newPassword");
+						}
+					} catch (error) {
+						toast.error("Error Resetting Password");
+						setLoading("false");
+						console.log(error);
+					}
+				}}
+				className="p-10 dark:text-white"
+			>
+				<label htmlFor="email" className="flex flex-col gap-1">
+					Email
+					<input
+						type="email"
+						name="email"
+						id="email"
+						value={email}
+						onChange={(e) => {
+							setEmail(e.target.value);
+						}}
+						placeholder="Your Email Here"
+						className="rounded-xl p-3 mb-3 dark:text-black border border-[#72659A] focus:outline-none"
+						autoFocus
+						required
+					/>
+				</label>
+
+				<button
+					type="submit"
+					className="float-right w-32 text-xl bg-[#37B94D] px-3 py-2 rounded-xl text-white my-5 font-medium border-2 border-[#268436] disabled:cursor-progress disabled:opacity-50"
+					disabled={loading === "true"}
+				>
+					Reset
 				</button>
 			</form>
 		</Modal>

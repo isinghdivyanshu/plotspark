@@ -67,23 +67,13 @@ function Timeline() {
 				setStoryData(res.data);
 			}
 		} catch (error) {
-			if (error instanceof AxiosError) {
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.message
-				) {
-					toast.error(error.response.data.message);
-				} else {
-					toast.error("Error Fetching Characters and Events");
-					console.log(err);
-				}
-			}
+			toast.error("Error Fetching Characters and Events");
+			console.log(error);
 		}
 	}
 
 	useEffect(() => {
-		if (isLoggedIn && currentStory !== "") {
+		if (isLoggedIn && currentStory) {
 			getCharsEvents();
 		}
 	}, [currentStory]);

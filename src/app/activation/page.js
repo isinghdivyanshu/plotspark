@@ -1,22 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "@/app/axios";
 import { useStore } from "@/app/store";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import EmailIcon from "@mui/icons-material/Email";
 
 export default function Activation() {
 	const router = useRouter();
 	const { email } = useStore();
 
+	const [token, setToken] = useState("");
 	const [loading, setLoading] = useState("false");
-
-	let token = "";
 
 	return (
 		<div className="flex flex-col w-screen h-screen bg-gradient-to-r from-[#FFEFD7] to-[#FFD7C8]  text-[#484848] justify-center items-center p-5 text-center dark:bg-none dark:bg-[#1A1D28] dark:text-[#DEE4F7]">
+			<div className="flex gap-5 justify-center items-center absolute top-10 left-5 lg:left-24">
+				<ArrowBackIosIcon
+					className=" hover:cursor-pointer hover:scale-110"
+					onClick={() => {
+						router.push("/login");
+					}}
+				/>
+				{loading === "true" ? (
+					<div className="border-b-8 rounded-full border-[#D31D8A] bg-[#37B94D] animate-spin w-4 h-4"></div>
+				) : null}
+			</div>
 			<EmailIcon className="text-6xl text-[#0C1F5F] mb-5 dark:text-[#A0B3F3]" />
 			<p className="text-4xl font-bold my-5">Please Verify your email</p>
 			<p className="text-lg">You’re almost there! We sent an email to</p>
@@ -42,8 +53,9 @@ export default function Activation() {
 							router.replace("/login");
 						}
 					} catch (err) {
-						toast.error("Wrong Token");
+						toast.error("Invalid Token");
 						console.log(err);
+						setToken("");
 						setLoading("false");
 					}
 				}}
@@ -51,18 +63,19 @@ export default function Activation() {
 			>
 				<input
 					type="text"
-					defaultValue=""
+					value={token}
 					onChange={(e) => {
-						token = e.target.value;
+						setToken(e.target.value);
 					}}
 					placeholder="Activation Token Here"
-					minLength={26}
+					maxLength={6}
+					minLength={6}
 					className="rounded-md p-2 outline-none text-black"
 					required
 				></input>
 				<button
 					type="submit"
-					className="py-2 px-7 bg-[#0C1F5F] rounded-md text-white font-medium text-base  dark:bg-[#A0B3F3] disabled:cursor-not-allowed disabled:opacity-50"
+					className="py-2 px-7 bg-[#0C1F5F] rounded-md text-white font-medium text-base  dark:bg-[#A0B3F3] disabled:cursor-progress disabled:opacity-50"
 					disabled={loading === "true"}
 				>
 					Submit Token
@@ -72,7 +85,7 @@ export default function Activation() {
 				Still can’t find the email? No problem.
 			</p>
 			<button
-				className="py-2 px-7 bg-[#0C1F5F] rounded-md text-white font-medium text-base dark:bg-[#A0B3F3] disabled:cursor-not-allowed disabled:opacity-50"
+				className="py-2 px-7 bg-[#0C1F5F] rounded-md text-white font-medium text-base dark:bg-[#A0B3F3] disabled:cursor-progress disabled:opacity-50"
 				onClick={async () => {
 					setLoading("true");
 					try {

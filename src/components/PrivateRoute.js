@@ -13,7 +13,7 @@ export default function PrivateRoute(Component) {
 			const email = localStorage.getItem("userEmail");
 			if (!auth || !email) {
 				toast.error("Login to view your Stories");
-				redirect("/");
+				redirect("/login");
 			}
 		}, [isLoggedIn]);
 

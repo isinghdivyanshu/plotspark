@@ -3,6 +3,7 @@ import { create } from "zustand";
 export const useStore = create((set) => ({
 	email: "",
 	setEmail: (email) => {
+		localStorage.setItem("userEmail", email);
 		set({ email: email });
 	},
 
@@ -25,7 +26,7 @@ export const useStore = create((set) => ({
 
 		localStorage.removeItem("userEmail");
 		localStorage.removeItem("authToken");
-		localStorage.removeItem("currentStory");
+		localStorage.setItem("currentStory", "");
 	},
 
 	darkMode: true,
@@ -60,7 +61,7 @@ export const useStore = create((set) => ({
 		}
 
 		const currentStory = localStorage.getItem("currentStory");
-		if (currentStory) {
+		if (currentStory !== "undefined" && currentStory !== "") {
 			set({ currentStory: JSON.parse(currentStory) });
 		} else {
 			localStorage.setItem("currentStory", "");

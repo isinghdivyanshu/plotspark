@@ -3,11 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+// import Image from "next/image";
 import axios from "../axios";
 import { useStore } from "@/app/store";
 import { toast } from "react-toastify";
+import CallModal from "@/components/CallModal";
 // import GoogleIcon from "@mui/icons-material/Google";
 // import AppleIcon from "@mui/icons-material/Apple";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
@@ -17,7 +20,21 @@ export default function Login() {
 
 	const [formData, setFormData] = useState({ email: "", password: "" });
 	const [showPassword, setShowPassword] = useState(false);
+	const [modalType, setModalType] = useState("");
+	const [modalData, setModalData] = useState("");
+	const [isModalOpen, setIsModalOpen] = useState({
+		forgotPasswordModal: "false",
+		newPasswordModal: "false",
+	});
 	const [loading, setLoading] = useState("false");
+
+	const closeModal = () => {
+		setIsModalOpen({
+			forgotPasswordModal: "false",
+			newPasswordModal: "false",
+		});
+		setModalType("");
+	};
 	// const hrStyle = {
 	// 	backgroundColor:
 	// 		localStorage.getItem("theme") === "dark" ? "#d1d1d1" : "#7979794d",
@@ -28,7 +45,18 @@ export default function Login() {
 	//TODO: Add Google & Apple Login
 
 	return (
-		<div className="h-screen flex justify-center items-center bg-gradient-to-r from-[#FFEFD7] to-[#FFD7C8] dark:bg-none dark:bg-[#1a1d28] dark:text-white">
+		<div className="relative h-screen flex justify-center items-center bg-gradient-to-r from-[#FFEFD7] to-[#FFD7C8] dark:bg-none dark:bg-[#1a1d28] dark:text-white">
+			<div className="flex gap-5 justify-center items-center absolute top-10 left-5 lg:left-24">
+				<ArrowBackIosIcon
+					className=" hover:cursor-pointer hover:scale-110"
+					onClick={() => {
+						router.push("/");
+					}}
+				/>
+				{loading === "true" ? (
+					<div className="border-b-8 rounded-full border-[#D31D8A] bg-[#37B94D] animate-spin w-4 h-4"></div>
+				) : null}
+			</div>
 			<div className="lg:w-[40%] w-full p-5 lg:p-24">
 				<div className="text-[#0C1F5F91] font-normal dark:text-[#a0b3f3]">
 					Hey there,
@@ -69,7 +97,7 @@ export default function Login() {
 							id="email"
 							value={formData.name}
 							onChange={handleChange}
-							placeholder="Type Here"
+							placeholder=""
 							autoComplete="email"
 							className="rounded-xl p-3 mb-6 dark:text-black"
 							required
@@ -85,7 +113,7 @@ export default function Login() {
 								value={formData.password}
 								onChange={handleChange}
 								minLength={8}
-								placeholder="Type Here"
+								placeholder="********"
 								autoComplete="current-password"
 								className="rounded-xl p-3 mb-14 w-full dark:text-black"
 								required
@@ -105,17 +133,37 @@ export default function Login() {
 					</label>
 					<button
 						type="submit"
-						className="w-full bg-[#0c1f5f] p-3 rounded-xl text-white mb-16 font-bold dark:bg-[#a0b3f3] disabled:cursor-not-allowed disabled:opacity-50"
+						className="w-full bg-[#0c1f5f] p-3 rounded-xl text-white mb-16 font-bold dark:bg-[#a0b3f3] disabled:cursor-progress disabled:opacity-50"
 						disabled={loading === "true"}
 					>
 						Log In
 					</button>
 				</form>
+				<span
+					className="text-sm hover:underline hover:cursor-pointer"
+					onClick={() => {
+						setIsModalOpen({
+							...isModalOpen,
+							forgotPasswordModal: "true",
+						}),
+							setModalType("forgotPassword");
+						setModalData({
+							isModalOpen,
+							setIsModalOpen,
+							setModalType,
+						});
+					}}
+				>
+					Forgot Password ?
+				</span>
+				<br />
 				<Link href="/signup">
-					<span className="text-[#5f6180b8] dark:text-[#A0B3F3]">
+					<span className="peer text-[#5f6180b8] dark:text-[#A0B3F3]">
 						First time here?{" "}
 					</span>
-					<span>Sign up</span>
+					<span className="hover:underline peer-hover:underline">
+						Sign up
+					</span>
 				</Link>
 			</div>
 			<div className="w-[60%] hidden md:block h-[80%] rounded-s-xl border border-[#000000] border-r-0 overflow-hidden ml-16 shadow-[-4px_0px_100px_4px_rgba(0,0,0,0.25)] dark:shadow-[-4px_0px_100px_4px_rgba(255,255,255,0.1)] dark:border-[#ffffff]">
@@ -125,8 +173,22 @@ export default function Login() {
 						<span className="w-[75%] rounded-xl bg-black dark:bg-white h-1"></span>
 					</div>
 				</div>
-				<div className="h-full bg-white dark:bg-[#1e1e1e]"></div>
+				<div className="h-full bg-white dark:bg-[#1e1e1e]">
+					{/* <Image
+						src="/timeline.jpeg"
+						alt="Timeline"
+						width={500}
+						height={500}
+						className="w-full h-full "
+					/> */}
+				</div>
 			</div>
+			<CallModal
+				modal={modalType}
+				areOpen={isModalOpen}
+				onClose={closeModal}
+				data={modalData}
+			/>
 		</div>
 	);
 

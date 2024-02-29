@@ -97,6 +97,7 @@ export default function Activation() {
 						);
 						if (response.data.message) {
 							toast.info("Resent Verification Email.");
+							setLoading("false");
 						}
 					} catch (err) {
 						toast.error("Error Resending Verification Email.");

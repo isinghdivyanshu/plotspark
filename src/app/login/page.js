@@ -215,6 +215,10 @@ export default function Login() {
 					"authToken",
 					res.data.authentication_token.token
 				);
+				localStorage.setItem(
+					"expiry",
+					res.data.authentication_token.expiry
+				);
 				login(formData.email, localStorage.token);
 				router.replace("/");
 				toast.success("Logged In");

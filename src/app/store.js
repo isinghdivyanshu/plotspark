@@ -26,6 +26,7 @@ export const useStore = create((set) => ({
 
 		localStorage.removeItem("userEmail");
 		localStorage.removeItem("authToken");
+		localStorage.removeItem("expiry");
 		localStorage.setItem("currentStory", "");
 	},
 

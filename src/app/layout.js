@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import AuthProvider from "./providers/AuthProvider";
 import ThemeProvider from "./providers/ThemeProvider";
 import { ToastContainer } from "react-toastify";
@@ -15,6 +16,19 @@ export const metadata = {
 export default function RootLayout({ children }) {
 	return (
 		<html lang="en">
+			<head>
+				<Script
+					async
+					src="https://www.googletagmanager.com/gtag/js?id=G-BBWE9MVK8Y"
+				></Script>
+				<Script id="google-analytics">
+					{` window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-BBWE9MVK8Y');`}
+				</Script>
+			</head>
 			<body className={inter.className}>
 				<ToastContainer
 					position="bottom-right"

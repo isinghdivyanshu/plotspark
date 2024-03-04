@@ -53,6 +53,7 @@ export default function TimelineNav() {
 				setStories(res.data.stories);
 				if (res.data.stories.length === 0) {
 					setCurrentStory("");
+					router.refresh();
 				} else {
 					setCurrentStory(
 						currentStory === "" ? res.data.stories[0] : currentStory

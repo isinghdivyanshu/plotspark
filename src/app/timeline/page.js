@@ -51,29 +51,31 @@ function Timeline() {
 	const [storyData, setStoryData] = useState("");
 
 	async function getCharsEvents() {
-		try {
-			const res = await axios.get(
-				`v1/eventsstory/${currentStory.id}`,
+		if (currentStory) {
+			try {
+				const res = await axios.get(
+					`v1/eventsstory/${currentStory.id}`,
 
-				{
-					headers: {
-						Authorization: `Bearer ${localStorage.getItem(
-							"authToken"
-						)}`,
-					},
+					{
+						headers: {
+							Authorization: `Bearer ${localStorage.getItem(
+								"authToken"
+							)}`,
+						},
+					}
+				);
+				if (res.data) {
+					setStoryData(res.data);
 				}
-			);
-			if (res.data) {
-				setStoryData(res.data);
+			} catch (error) {
+				toast.error("Error Fetching Characters and Events");
+				console.log(error);
 			}
-		} catch (error) {
-			toast.error("Error Fetching Characters and Events");
-			console.log(error);
-		}
+		} else setStoryData([]);
 	}
 
 	useEffect(() => {
-		if (isLoggedIn && currentStory) {
+		if (isLoggedIn && (currentStory || currentStory === "")) {
 			getCharsEvents();
 		}
 	}, [currentStory]);
@@ -100,21 +102,23 @@ function Timeline() {
 	let x = 25;
 
 	function createNodesEdges() {
-		nodes.push({
-			id: "addCharacterButton",
-			position: { x: x, y: y },
-			data: {
-				story_id: currentStory.id,
-				getCharsEvents: getCharsEvents,
-				isOpen: areModalsOpen,
-				setIsOpen: setAreModalsOpen,
-				onClose: closeModals,
-				modalData: modalData,
-				setModalData: setModalData,
-				setModalType: setModalType,
-			},
-			type: "addCharacterButton",
-		});
+		if (currentStory) {
+			nodes.push({
+				id: "addCharacterButton",
+				position: { x: x, y: y },
+				data: {
+					story_id: currentStory.id,
+					getCharsEvents: getCharsEvents,
+					isOpen: areModalsOpen,
+					setIsOpen: setAreModalsOpen,
+					onClose: closeModals,
+					modalData: modalData,
+					setModalData: setModalData,
+					setModalType: setModalType,
+				},
+				type: "addCharacterButton",
+			});
+		}
 
 		if (storyData && storyData.story_events) {
 			y = 150;

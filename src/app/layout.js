@@ -17,6 +17,7 @@ export default function RootLayout({ children }) {
 	return (
 		<html lang="en">
 			<head>
+				<link rel="icon" href="/images/favicon.png" sizes="any" />
 				<Script
 					async
 					src="https://www.googletagmanager.com/gtag/js?id=G-BBWE9MVK8Y"

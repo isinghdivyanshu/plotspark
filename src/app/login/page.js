@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-// import Image from "next/image";
 import axios from "../axios";
 import { useStore } from "@/app/store";
 import { toast } from "react-toastify";
@@ -173,15 +172,7 @@ export default function Login() {
 						<span className="w-[75%] rounded-xl bg-black dark:bg-white h-1"></span>
 					</div>
 				</div>
-				<div className="h-full bg-white dark:bg-[#1e1e1e]">
-					{/* <Image
-						src="/timeline.jpeg"
-						alt="Timeline"
-						width={500}
-						height={500}
-						className="w-full h-full "
-					/> */}
-				</div>
+				<div className="h-full bg-white dark:bg-[#1e1e1e]"></div>
 			</div>
 			<CallModal
 				modal={modalType}

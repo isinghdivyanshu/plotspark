@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useStore } from "@/app/store";
+import Image from "next/image";
 import CallModal from "./CallModal";
 import axios from "../app/axios";
 import { toast } from "react-toastify";
@@ -33,8 +34,8 @@ export default function Navbar() {
 
 	return (
 		<div className="bg-[#FFEAE2] dark:bg-[#3b435e] flex px-7 py-4  md:px-28 justify-between items-center  dark:text-white">
-			<div className="flex gap-12 justify-between items-center">
-				<span className="text-xl font-extrabold">Writer</span>
+			<div className="flex gap-9 justify-between items-center">
+				<Image src="/logo.png" width={70} height={70} alt="logo" />
 				<ul className="flex gap-12">
 					<NavLinks />
 				</ul>

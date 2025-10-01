@@ -8,8 +8,10 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,6 +32,9 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private String password;
+
+    @OneToMany(mappedBy = "user",  cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Story> stories = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,5 +1,9 @@
-### GET request to example server
-GET https://examples.http-client.intellij.net/get
-    ?generated-in=IntelliJ IDEA
+### Register new user
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
 
-###
+ {
+   "username": "isinghdivyanshu",
+   "email": "singhdivyanshu2707@gmail.com",
+   "password": "password123"
+ }

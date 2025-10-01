@@ -4,14 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.Date;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ErrorDetailsDto {
-    private Date timestamp;
-    private String message;
-    private String details;
+public class JwtAuthResponseDto {
+    private String accessToken;
+    private String tokenType = "Bearer";
 }

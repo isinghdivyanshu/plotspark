@@ -11,13 +11,13 @@ import org.plotspark.plotsparkbackend.repository.UserRepository;
 import org.plotspark.plotsparkbackend.service.StoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +27,7 @@ public class StoryServiceImpl implements StoryService {
     private final UserRepository userRepository;
     private static final Logger logger = LoggerFactory.getLogger(StoryServiceImpl.class);
 
+    // createStory
     @Override
     public StoryResponseDto createStory(StoryRequestDto storyRequestDto) {
         logger.info("Creating story with title {}", storyRequestDto.getTitle());
@@ -52,18 +53,20 @@ public class StoryServiceImpl implements StoryService {
         return mapToDto(newStory);
     }
 
+    // getAllStories
     @Override
-    public List<StoryResponseDto> getAllStories() {
-        logger.info("Retrieving all stories");
+    public Page<StoryResponseDto> getAllStories(Pageable pageable) {
+        logger.info("Retrieving all stories for page {} with size {}", pageable.getPageNumber(), pageable.getPageSize());
 
         User currentUser = getCurrentUser();
 
-        List<Story> stories = storyRepository.findAllByUser_Id(currentUser.getId());
+        Page<Story> stories = storyRepository.findAllByUser_Id(currentUser.getId(), pageable);
 
-        logger.info("All Stories retrieved");
-        return stories.stream().map(this::mapToDto).collect(Collectors.toList());
+        logger.info("All Stories retrieved.");
+        return stories.map(this::mapToDto);
     }
 
+    // getStoriesById
     @Override
     public StoryResponseDto getStoryById(Long storyId) {
         logger.info("Retrieving story with id {}", storyId);
@@ -77,6 +80,7 @@ public class StoryServiceImpl implements StoryService {
         return mapToDto(story);
     }
 
+    // updateStoryById
     @Override
     public StoryResponseDto updateStoryById(Long storyId, StoryRequestDto storyRequestDto) {
         logger.info("Updating story with id {}", storyId);
@@ -95,6 +99,7 @@ public class StoryServiceImpl implements StoryService {
         return mapToDto(existingStory);
     }
 
+    // deleteStoryById
     @Override
     public void deleteStoryById(Long storyId) {
         logger.info("Deleting story with id {}", storyId);

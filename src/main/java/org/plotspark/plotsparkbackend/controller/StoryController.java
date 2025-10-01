@@ -6,6 +6,9 @@ import org.plotspark.plotsparkbackend.dto.StoryRequestDto;
 import org.plotspark.plotsparkbackend.dto.StoryResponseDto;
 import org.plotspark.plotsparkbackend.entity.Story;
 import org.plotspark.plotsparkbackend.service.StoryService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +25,7 @@ public class StoryController {
 
     private final StoryService storyService;
 
+    // create story
     @PostMapping
     public ResponseEntity<StoryResponseDto> createStory(@Valid @RequestBody StoryRequestDto storyRequestDto) {
         StoryResponseDto storyResponseDto = storyService.createStory(storyRequestDto);
@@ -29,13 +33,15 @@ public class StoryController {
         return new ResponseEntity<>(storyResponseDto, HttpStatus.CREATED);
     }
 
+    // getAllStories
     @GetMapping
-    public ResponseEntity<List<StoryResponseDto>> getAllStories() {
-        List<StoryResponseDto> storyResponseDtos = storyService.getAllStories();
+    public ResponseEntity<Page<StoryResponseDto>> getAllStories(@PageableDefault(size = 10, sort="title")Pageable pageable) {
+        Page<StoryResponseDto> storyResponseDtos = storyService.getAllStories(pageable);
 
         return new ResponseEntity<>(storyResponseDtos, HttpStatus.OK);
     }
 
+    // getStoryById
     @GetMapping("/{id}")
     public ResponseEntity<StoryResponseDto> getStoryById(@PathVariable(name = "id") Long storyId) {
         StoryResponseDto storyResponseDto = storyService.getStoryById(storyId);
@@ -43,6 +49,7 @@ public class StoryController {
         return new ResponseEntity<>(storyResponseDto, HttpStatus.OK);
     }
 
+    // updateStoryById
     @PutMapping("/{id}")
     public ResponseEntity<StoryResponseDto> updateStoryById(@PathVariable(name = "id") Long storyId, @Valid @RequestBody StoryRequestDto storyRequestDto) {
         StoryResponseDto storyResponseDto = storyService.updateStoryById(storyId, storyRequestDto);
@@ -50,6 +57,7 @@ public class StoryController {
         return new ResponseEntity<>(storyResponseDto, HttpStatus.OK);
     }
 
+    // deleteStoryById
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteStoryById(@PathVariable(name = "id") Long storyId) {
         storyService.deleteStoryById(storyId);

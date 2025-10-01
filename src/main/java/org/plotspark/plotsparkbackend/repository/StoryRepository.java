@@ -2,6 +2,8 @@ package org.plotspark.plotsparkbackend.repository;
 
 import org.plotspark.plotsparkbackend.entity.Story;
 import org.plotspark.plotsparkbackend.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -13,7 +15,7 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
 
     Optional<Story> findByIdAndUser(Long id, User user);
 
-    List<Story> findAllByUser_Id(Long userId);
+    Page<Story> findAllByUser_Id(Long userId, Pageable pageable);
 
     Optional<Story> findByIdAndUser_Id(Long id, Long userId);
 }

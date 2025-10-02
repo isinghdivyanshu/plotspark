@@ -29,7 +29,4 @@ public class Chapter {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "story_id", nullable = false)
     private Story story;
-
-    @Column(nullable = false)
-    private Long authorId;
 }

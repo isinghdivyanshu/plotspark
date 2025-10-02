@@ -136,7 +136,8 @@ public class StoryServiceImpl implements StoryService {
         responseDto.setId(story.getId());
         responseDto.setTitle(story.getTitle());
         responseDto.setDescription(story.getDescription());
-        responseDto.setAuthor(story.getUser().getUsername());
+        responseDto.setUserId(story.getUser().getId());
+
         return responseDto;
     }
 }

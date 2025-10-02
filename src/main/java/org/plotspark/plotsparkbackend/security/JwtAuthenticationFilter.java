@@ -36,6 +36,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        final String requestURI = request.getRequestURI();
+        // don't check the auth routes even if token is found
+        if(requestURI.startsWith("/api/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String accessToken = getTokenFromRequest(request);
 
         if(StringUtils.hasText(accessToken) && jwtTokenProvider.validateToken(accessToken)) {

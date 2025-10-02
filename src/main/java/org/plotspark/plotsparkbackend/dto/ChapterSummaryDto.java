@@ -5,15 +5,7 @@ import lombok.Data;
 
 @Data
 public class ChapterSummaryDto {
-    @NotBlank
     private Long id;
-
-    @NotBlank
     private String title;
-
-    @NotBlank
-    private String story;
-
-    @NotBlank
-    private String author;
+    private Long storyId;
 }

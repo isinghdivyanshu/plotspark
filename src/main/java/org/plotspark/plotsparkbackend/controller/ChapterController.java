@@ -30,7 +30,7 @@ public class ChapterController {
 
     // getAllChapters by storyId
     @GetMapping
-    public ResponseEntity<PagedResponseDto<ChapterSummaryDto>> getAllChaptersByStoryId(@PageableDefault(size = 10, sort = "title") @PathVariable Long storyId, Pageable pageable) {
+    public ResponseEntity<PagedResponseDto<ChapterSummaryDto>> getAllChaptersByStoryId(@PageableDefault(sort = "title") @PathVariable Long storyId, Pageable pageable) {
         PagedResponseDto<ChapterSummaryDto> chapterSummaryDtos = chapterService.getAllChaptersByStoryId(storyId, pageable);
 
         return new ResponseEntity<>(chapterSummaryDtos, HttpStatus.OK);

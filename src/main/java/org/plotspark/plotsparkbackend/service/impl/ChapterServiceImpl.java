@@ -51,7 +51,6 @@ public class ChapterServiceImpl implements ChapterService {
         newChapter.setTitle(chapterRequestDto.getTitle());
         newChapter.setContent(chapterRequestDto.getContent());
         newChapter.setStory(story);
-        newChapter.setAuthorId(currentUser.getId());
 
         chapterRepository.save(newChapter);
 
@@ -61,7 +60,7 @@ public class ChapterServiceImpl implements ChapterService {
 
     // get all chapters for a story by storyId
     @Override
-    @Transactional(readOnly = true) // because we are fetching columns that are set to lazy load
+    @Transactional(readOnly = true) // even though we are not fetching any lazy column, Page might interfere sometimes
     // @Transactional considers the whole method as single unit and rolls back if any error happen
     public PagedResponseDto<ChapterSummaryDto> getAllChaptersByStoryId(Long storyId, Pageable pageable) {
         logger.info("Retrieving chapters by story id {}", storyId);
@@ -72,8 +71,7 @@ public class ChapterServiceImpl implements ChapterService {
             throw new ApiException(HttpStatus.NOT_FOUND, "Story not found");
         }
 
-
-        Page<Chapter> pagedChapters = chapterRepository.findAllByStoryIdWithDetails(storyId, pageable);
+        Page<Chapter> pagedChapters = chapterRepository.findAllByStoryId(storyId, pageable);
 
         List<ChapterSummaryDto> chaptersDto = pagedChapters.getContent().stream()
                 .map(this::mapToSummaryDto)
@@ -99,7 +97,7 @@ public class ChapterServiceImpl implements ChapterService {
 
         User currentUser = getCurrentUser();
 
-        Chapter chapter = chapterRepository.findOneByIdAndStory_IdAndAuthorId(chapterId, storyId, currentUser.getId())
+        Chapter chapter = chapterRepository.findOneByIdAndStoryIdAndStoryUserId(chapterId, storyId, currentUser.getId())
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Chapter not found"));
 
         logger.info("Retrieved chapter by id {}", chapterId);
@@ -108,13 +106,13 @@ public class ChapterServiceImpl implements ChapterService {
 
     // deleteChapterById
     @Override
-    @Transactional
+    @Transactional // don't know why unable to access lob stream error is happening
     public void deleteChapterById(Long chapterId, Long storyId) {
         logger.info("Deleting chapter by id {}", chapterId);
 
         User currentUser = getCurrentUser();
 
-        Chapter chapter = chapterRepository.findOneByIdAndStory_IdAndAuthorId(chapterId, storyId, currentUser.getId())
+        Chapter chapter = chapterRepository.findOneByIdAndStoryIdAndStoryUserId(chapterId, storyId, currentUser.getId())
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Chapter not found"));
 
         chapterRepository.delete(chapter);
@@ -129,8 +127,8 @@ public class ChapterServiceImpl implements ChapterService {
 
         User currentUser = getCurrentUser();
 
-        Chapter oldChapter = chapterRepository.findChapterDetails(chapterId, storyId, currentUser.getId())
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Chapter not found"));
+        Chapter oldChapter = chapterRepository.findOneByIdAndStoryIdAndStoryUserId(chapterId, storyId, currentUser.getId())
+                        .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Chapter not found"));
 
         oldChapter.setTitle(chapterRequestDto.getTitle());
         oldChapter.setContent(chapterRequestDto.getContent());
@@ -154,8 +152,7 @@ public class ChapterServiceImpl implements ChapterService {
         ChapterSummaryDto chapterSummaryDto = new ChapterSummaryDto();
         chapterSummaryDto.setId(chapter.getId());
         chapterSummaryDto.setTitle(chapter.getTitle());
-        chapterSummaryDto.setStory(chapter.getStory().getTitle());
-        chapterSummaryDto.setAuthor(chapter.getStory().getUser().getUsername());
+        chapterSummaryDto.setStoryId(chapter.getStory().getId());
 
         return chapterSummaryDto;
     }
@@ -164,9 +161,8 @@ public class ChapterServiceImpl implements ChapterService {
         ChapterDetailDto chapterDetailDto = new ChapterDetailDto();
         chapterDetailDto.setId(chapter.getId());
         chapterDetailDto.setTitle(chapter.getTitle());
+        chapterDetailDto.setStoryId(chapter.getStory().getId());
         chapterDetailDto.setContent(chapter.getContent());
-        chapterDetailDto.setStory(chapter.getStory().getTitle());
-        chapterDetailDto.setAuthor(chapter.getStory().getUser().getUsername());
 
         return chapterDetailDto;
     }

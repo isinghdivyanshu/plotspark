@@ -7,5 +7,5 @@ public class StoryResponseDto {
     private Long id;
     private String title;
     private String description;
-    private String author;
+    private Long userId;
 }

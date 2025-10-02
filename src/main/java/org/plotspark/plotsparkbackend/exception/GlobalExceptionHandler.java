@@ -56,7 +56,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorDetailsDto> handleAuthenticationException(AuthenticationException exception, WebRequest request) {
         ErrorDetailsDto errorDetails = new ErrorDetailsDto(
                 new Date(),
-                exception.getMessage(),
+                "Invalid username or password",
                 request.getDescription(false)
         );
 

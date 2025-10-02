@@ -74,7 +74,8 @@ public class GlobalExceptionHandler {
                 request.getDescription(false)
         );
 
-        logger.error("Internal Server Error: {}", errorDetails, exception);
+        logger.error("Internal Server Error for request at: {}", request.getDescription(true));
+        logger.error("Error details: {}", exception.getMessage(), exception);
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

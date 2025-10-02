@@ -1,6 +1,7 @@
 package org.plotspark.plotsparkbackend.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.plotspark.plotsparkbackend.dto.PagedResponseDto;
 import org.plotspark.plotsparkbackend.dto.StoryRequestDto;
 import org.plotspark.plotsparkbackend.dto.StoryResponseDto;
 import org.plotspark.plotsparkbackend.entity.Story;
@@ -17,7 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -36,9 +37,7 @@ public class StoryServiceImpl implements StoryService {
         User currentUser = getCurrentUser();
 
         // check if story for the user exists
-        Optional<Story> existingStory = storyRepository.findByTitleAndUser(storyRequestDto.getTitle(), currentUser);
-
-        if(existingStory.isPresent()) {
+        if (storyRepository.existsByTitleAndUser_Id(storyRequestDto.getTitle(), currentUser.getId())) {
             throw new ApiException(HttpStatus.CONFLICT, "Story with same title already exists.");
         }
 
@@ -55,15 +54,26 @@ public class StoryServiceImpl implements StoryService {
 
     // getAllStories
     @Override
-    public Page<StoryResponseDto> getAllStories(Pageable pageable) {
+    public PagedResponseDto<StoryResponseDto> getAllStories(Pageable pageable) {
         logger.info("Retrieving all stories for page {} with size {}", pageable.getPageNumber(), pageable.getPageSize());
 
         User currentUser = getCurrentUser();
 
-        Page<Story> stories = storyRepository.findAllByUser_Id(currentUser.getId(), pageable);
+        Page<Story> pagedStories = storyRepository.findAllByUser_Id(currentUser.getId(), pageable);
+
+        List<StoryResponseDto> storyDtos = pagedStories.getContent().stream()
+                .map(this::mapToDto)
+                .toList();
 
         logger.info("All Stories retrieved.");
-        return stories.map(this::mapToDto);
+        return new PagedResponseDto<>(
+                storyDtos,
+                pagedStories.getNumber(),
+                pagedStories.getSize(),
+                pagedStories.getTotalElements(),
+                pagedStories.getTotalPages(),
+                pagedStories.isLast()
+        );
     }
 
     // getStoriesById
@@ -73,7 +83,7 @@ public class StoryServiceImpl implements StoryService {
 
         User currentUser = getCurrentUser();
         
-        Story story = storyRepository.findByIdAndUser_Id(storyId, currentUser.getId())
+        Story story = storyRepository.findOneByIdAndUser_Id(storyId, currentUser.getId())
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Story not found."));
 
         logger.info("Story with id {} retrieved", storyId);
@@ -87,7 +97,7 @@ public class StoryServiceImpl implements StoryService {
 
         User currentUser = getCurrentUser();
 
-        Story  existingStory = storyRepository.findByIdAndUser_Id(storyId, currentUser.getId())
+        Story  existingStory = storyRepository.findOneByIdAndUser_Id(storyId, currentUser.getId())
                         .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Story not found."));
 
         existingStory.setTitle(storyRequestDto.getTitle());
@@ -106,11 +116,11 @@ public class StoryServiceImpl implements StoryService {
 
         User currentUser = getCurrentUser();
 
-        Story existingStory = storyRepository.findByIdAndUser(storyId, currentUser)
+        Story existingStory = storyRepository.findOneByIdAndUser_Id(storyId, currentUser.getId())
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Story not found."));
 
-        logger.info("Story with id {} deleted", storyId);
         storyRepository.delete(existingStory);
+        logger.info("Story with id {} deleted", storyId);
     }
 
     // get the authenticated username and check if it exits in database
@@ -126,8 +136,7 @@ public class StoryServiceImpl implements StoryService {
         responseDto.setId(story.getId());
         responseDto.setTitle(story.getTitle());
         responseDto.setDescription(story.getDescription());
-        responseDto.setUser(story.getUser().getUsername());
+        responseDto.setAuthor(story.getUser().getUsername());
         return responseDto;
     }
-
 }

@@ -1,8 +1,8 @@
 package org.plotspark.plotsparkbackend.service;
 
 import org.plotspark.plotsparkbackend.dto.PagedResponseDto;
-import org.plotspark.plotsparkbackend.dto.StoryRequestDto;
-import org.plotspark.plotsparkbackend.dto.StoryResponseDto;
+import org.plotspark.plotsparkbackend.dto.story.StoryRequestDto;
+import org.plotspark.plotsparkbackend.dto.story.StoryResponseDto;
 import org.springframework.data.domain.Pageable;
 
 public interface StoryService {

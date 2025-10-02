@@ -1,4 +1,4 @@
-package org.plotspark.plotsparkbackend.dto;
+package org.plotspark.plotsparkbackend.dto.story;
 
 import lombok.Data;
 

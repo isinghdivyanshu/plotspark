@@ -2,8 +2,8 @@ package org.plotspark.plotsparkbackend.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.plotspark.plotsparkbackend.dto.PagedResponseDto;
-import org.plotspark.plotsparkbackend.dto.StoryRequestDto;
-import org.plotspark.plotsparkbackend.dto.StoryResponseDto;
+import org.plotspark.plotsparkbackend.dto.story.StoryRequestDto;
+import org.plotspark.plotsparkbackend.dto.story.StoryResponseDto;
 import org.plotspark.plotsparkbackend.entity.Story;
 import org.plotspark.plotsparkbackend.entity.User;
 import org.plotspark.plotsparkbackend.exception.ApiException;

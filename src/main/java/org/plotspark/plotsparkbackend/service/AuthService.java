@@ -1,7 +1,7 @@
 package org.plotspark.plotsparkbackend.service;
 
-import org.plotspark.plotsparkbackend.dto.LoginRequestDto;
-import org.plotspark.plotsparkbackend.dto.RegisterRequestDto;
+import org.plotspark.plotsparkbackend.dto.auth.LoginRequestDto;
+import org.plotspark.plotsparkbackend.dto.auth.RegisterRequestDto;
 
 public interface AuthService {
 

@@ -1,4 +1,4 @@
-package org.plotspark.plotsparkbackend.dto;
+package org.plotspark.plotsparkbackend.dto.chapter;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

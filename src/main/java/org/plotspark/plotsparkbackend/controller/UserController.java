@@ -1,7 +1,7 @@
 package org.plotspark.plotsparkbackend.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.plotspark.plotsparkbackend.dto.UserProfileDto;
+import org.plotspark.plotsparkbackend.dto.user.UserProfileDto;
 import org.plotspark.plotsparkbackend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

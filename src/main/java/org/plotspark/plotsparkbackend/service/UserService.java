@@ -1,6 +1,6 @@
 package org.plotspark.plotsparkbackend.service;
 
-import org.plotspark.plotsparkbackend.dto.UserProfileDto;
+import org.plotspark.plotsparkbackend.dto.user.UserProfileDto;
 
 public interface UserService {
 

@@ -1,8 +1,8 @@
 package org.plotspark.plotsparkbackend.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.plotspark.plotsparkbackend.dto.LoginRequestDto;
-import org.plotspark.plotsparkbackend.dto.RegisterRequestDto;
+import org.plotspark.plotsparkbackend.dto.auth.LoginRequestDto;
+import org.plotspark.plotsparkbackend.dto.auth.RegisterRequestDto;
 import org.plotspark.plotsparkbackend.entity.User;
 import org.plotspark.plotsparkbackend.exception.ApiException;
 import org.plotspark.plotsparkbackend.repository.UserRepository;

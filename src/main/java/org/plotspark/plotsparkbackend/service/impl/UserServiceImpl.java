@@ -1,7 +1,7 @@
 package org.plotspark.plotsparkbackend.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.plotspark.plotsparkbackend.dto.UserProfileDto;
+import org.plotspark.plotsparkbackend.dto.user.UserProfileDto;
 import org.plotspark.plotsparkbackend.entity.User;
 import org.plotspark.plotsparkbackend.exception.ApiException;
 import org.plotspark.plotsparkbackend.repository.UserRepository;

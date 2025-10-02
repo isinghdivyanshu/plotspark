@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -33,4 +34,9 @@ public class Story {
     // different values for cascade -> PERSIST|MERGE|REMOVE|REFRESH
     @OneToMany(mappedBy = "story", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Chapter> chapters = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    // because it is a manyToMany relation we need a new joinTable
+    @JoinTable(name = "story_genres", joinColumns = @JoinColumn(name = "story_id"),  inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    private Set<Genre> genres;
 }

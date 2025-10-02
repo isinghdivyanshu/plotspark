@@ -1,8 +1,8 @@
 package org.plotspark.plotsparkbackend.service;
 
-import org.plotspark.plotsparkbackend.dto.ChapterDetailDto;
-import org.plotspark.plotsparkbackend.dto.ChapterRequestDto;
-import org.plotspark.plotsparkbackend.dto.ChapterSummaryDto;
+import org.plotspark.plotsparkbackend.dto.chapter.ChapterDetailDto;
+import org.plotspark.plotsparkbackend.dto.chapter.ChapterRequestDto;
+import org.plotspark.plotsparkbackend.dto.chapter.ChapterSummaryDto;
 import org.plotspark.plotsparkbackend.dto.PagedResponseDto;
 import org.springframework.data.domain.Pageable;
 

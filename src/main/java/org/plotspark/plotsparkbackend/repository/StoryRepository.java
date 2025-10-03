@@ -20,4 +20,7 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
 
     @Query("SELECT COUNT(s) > 0 FROM Story s JOIN s.genres g WHERE s.id = :storyId AND g.id = :genreId")
     boolean existsGenreAssociation(Long storyId, Long genreId);
+
+    @Query("Select COUNT(s) > 0 FROM Story s JOIN s.tags t WHERE s.id = :storyId AND t.id = :tagId")
+    boolean existsTagAssociation(Long storyId, Long tagId);
 }

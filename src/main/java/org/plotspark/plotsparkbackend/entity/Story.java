@@ -39,4 +39,8 @@ public class Story {
     // because it is a manyToMany relation we need a new joinTable
     @JoinTable(name = "story_genres", joinColumns = @JoinColumn(name = "story_id"),  inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private Set<Genre> genres;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "story_tags", joinColumns = @JoinColumn(name = "story_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<Tag> tags;
 }

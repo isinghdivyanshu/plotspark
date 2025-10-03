@@ -5,12 +5,15 @@ import org.plotspark.plotsparkbackend.dto.PagedResponseDto;
 import org.plotspark.plotsparkbackend.dto.genre.GenreIdRequestDto;
 import org.plotspark.plotsparkbackend.dto.story.StoryRequestDto;
 import org.plotspark.plotsparkbackend.dto.story.StoryResponseDto;
+import org.plotspark.plotsparkbackend.dto.tag.TagIdRequestDto;
 import org.plotspark.plotsparkbackend.entity.Genre;
 import org.plotspark.plotsparkbackend.entity.Story;
+import org.plotspark.plotsparkbackend.entity.Tag;
 import org.plotspark.plotsparkbackend.entity.User;
 import org.plotspark.plotsparkbackend.exception.ApiException;
 import org.plotspark.plotsparkbackend.repository.GenreRepository;
 import org.plotspark.plotsparkbackend.repository.StoryRepository;
+import org.plotspark.plotsparkbackend.repository.TagRepository;
 import org.plotspark.plotsparkbackend.repository.UserRepository;
 import org.plotspark.plotsparkbackend.service.StoryService;
 import org.slf4j.Logger;
@@ -30,6 +33,7 @@ public class StoryServiceImpl implements StoryService {
     private final StoryRepository storyRepository;
     private final UserRepository userRepository;
     private final GenreRepository genreRepository;
+    private final TagRepository tagRepository;
     private static final Logger logger = LoggerFactory.getLogger(StoryServiceImpl.class);
 
     // createStory
@@ -174,6 +178,53 @@ public class StoryServiceImpl implements StoryService {
             story.getGenres().remove(genreToRemove);
             storyRepository.save(story);
             logger.info("Genre {} removed from story with id {}", genreId, storyId);
+        }
+    }
+
+    // addTagToStory
+    @Override
+    public void addTagToStory(Long storyId, TagIdRequestDto tagIdRequestDto) {
+        logger.info("Adding tag {} to story with id {}", tagIdRequestDto.getId(), storyId);
+
+        User currentUser = getCurrentUser();
+
+        if(storyRepository.existsTagAssociation(storyId, tagIdRequestDto.getId())) {
+            throw new ApiException(HttpStatus.CONFLICT, "Story already has this tag.");
+        }
+
+        Story story = storyRepository.findOneByIdAndUser_Id(storyId, currentUser.getId())
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Story not found."));
+
+        Tag tag = tagRepository.findById(tagIdRequestDto.getId())
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Tag not found."));
+
+        story.getTags().add(tag);
+        storyRepository.save(story);
+
+        logger.info("Tag {} added to story with id {}", tagIdRequestDto.getId(), storyId);
+    }
+
+    // removeTagFromStory
+    @Override
+    public void removeTagFromStory(Long storyId, Long tagId) {
+        logger.info("Removing tag {} from story with id {}", tagId, storyId);
+
+        User currentUser = getCurrentUser();
+        Story story = storyRepository.findOneByIdAndUser_Id(storyId, currentUser.getId())
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Story not found."));
+
+        Tag tagToRemove = story.getTags().stream()
+                .filter(tag -> tag.getId().equals(tagId))
+                .findFirst()
+                .orElse(null);
+
+        if(tagToRemove == null) {
+            logger.info("Attempted to remove tag {} from story with id {} but association did not exist", tagId, storyId);
+        }
+        else {
+            story.getTags().remove(tagToRemove);
+            storyRepository.save(story);
+            logger.info("Tag {} removed from story with id {}", tagId, storyId);
         }
     }
 

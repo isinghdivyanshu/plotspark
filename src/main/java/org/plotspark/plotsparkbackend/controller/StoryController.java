@@ -6,6 +6,8 @@ import org.plotspark.plotsparkbackend.dto.PagedResponseDto;
 import org.plotspark.plotsparkbackend.dto.genre.GenreIdRequestDto;
 import org.plotspark.plotsparkbackend.dto.story.StoryRequestDto;
 import org.plotspark.plotsparkbackend.dto.story.StoryResponseDto;
+import org.plotspark.plotsparkbackend.dto.tag.TagIdRequestDto;
+import org.plotspark.plotsparkbackend.dto.tag.TagRequestDto;
 import org.plotspark.plotsparkbackend.service.GenreService;
 import org.plotspark.plotsparkbackend.service.StoryService;
 import org.springframework.data.domain.Pageable;
@@ -76,5 +78,21 @@ public class StoryController {
         storyService.removeGenreFromStory(storyId, genreId);
 
         return new ResponseEntity<>("Genre removed successfully", HttpStatus.OK);
+    }
+
+    // addTagToStory
+    @PostMapping("/{storyId}/tags")
+    public ResponseEntity<String> addTagToStory(@PathVariable Long storyId, @Valid @RequestBody TagIdRequestDto tagIdRequestDto) {
+        storyService.addTagToStory(storyId, tagIdRequestDto);
+
+        return new ResponseEntity<>("Tag added successfully", HttpStatus.OK);
+    }
+
+    // removeTagFromStory
+    @DeleteMapping("/{storyId}/tags/{tagId}")
+    public ResponseEntity<String> removeTagFromStory(@PathVariable Long storyId, @PathVariable Long tagId) {
+        storyService.removeTagFromStory(storyId, tagId);
+
+        return new ResponseEntity<>("Tag removed successfully", HttpStatus.OK);
     }
 }

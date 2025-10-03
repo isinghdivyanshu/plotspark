@@ -1,18 +1,24 @@
 package org.plotspark.plotsparkbackend.service;
 
 import org.plotspark.plotsparkbackend.dto.PagedResponseDto;
+import org.plotspark.plotsparkbackend.dto.genre.GenreIdRequestDto;
 import org.plotspark.plotsparkbackend.dto.story.StoryRequestDto;
 import org.plotspark.plotsparkbackend.dto.story.StoryResponseDto;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 
 public interface StoryService {
-    public StoryResponseDto createStory(StoryRequestDto storyRequestDto);
+    StoryResponseDto createStory(StoryRequestDto storyRequestDto);
 
-    public PagedResponseDto<StoryResponseDto> getAllStories(Pageable pageable);
+    PagedResponseDto<StoryResponseDto> getAllStories(Pageable pageable);
 
-    public StoryResponseDto getStoryById(Long storyId);
+    StoryResponseDto getStoryById(Long storyId);
 
-    public StoryResponseDto updateStoryById(Long storyId, StoryRequestDto storyRequestDto);
+    StoryResponseDto updateStoryById(Long storyId, StoryRequestDto storyRequestDto);
 
     void deleteStoryById(Long storyId);
+
+    void addGenreToStory(Long storyId, GenreIdRequestDto genreIdRequestDto);
+
+    void removeGenreFromStory(Long storyId, Long genreId);
 }

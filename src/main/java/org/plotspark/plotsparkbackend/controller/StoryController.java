@@ -3,8 +3,10 @@ package org.plotspark.plotsparkbackend.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.plotspark.plotsparkbackend.dto.PagedResponseDto;
+import org.plotspark.plotsparkbackend.dto.genre.GenreIdRequestDto;
 import org.plotspark.plotsparkbackend.dto.story.StoryRequestDto;
 import org.plotspark.plotsparkbackend.dto.story.StoryResponseDto;
+import org.plotspark.plotsparkbackend.service.GenreService;
 import org.plotspark.plotsparkbackend.service.StoryService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class StoryController {
 
     private final StoryService storyService;
+    private final GenreService genreService;
 
     // create story
     @PostMapping
@@ -57,5 +60,21 @@ public class StoryController {
         storyService.deleteStoryById(storyId);
 
         return new ResponseEntity<>("Story deleted successfully", HttpStatus.OK);
+    }
+
+    // addGenreToStory
+    @PostMapping("/{storyId}/genres")
+    public ResponseEntity<String> addGenreToStory(@PathVariable Long storyId, @Valid @RequestBody GenreIdRequestDto genreIdRequestDto) {
+        storyService.addGenreToStory(storyId, genreIdRequestDto);
+
+        return new ResponseEntity<>("Genre added successfully", HttpStatus.OK);
+    }
+
+    // removeGenreFromStory
+    @DeleteMapping("/{storyId}/genres/{genreId}")
+    public ResponseEntity<String>  removeGenreFromStory(@PathVariable Long storyId, @PathVariable Long genreId) {
+        storyService.removeGenreFromStory(storyId, genreId);
+
+        return new ResponseEntity<>("Genre removed successfully", HttpStatus.OK);
     }
 }

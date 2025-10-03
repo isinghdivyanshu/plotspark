@@ -2,11 +2,14 @@ package org.plotspark.plotsparkbackend.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.plotspark.plotsparkbackend.dto.PagedResponseDto;
+import org.plotspark.plotsparkbackend.dto.genre.GenreIdRequestDto;
 import org.plotspark.plotsparkbackend.dto.story.StoryRequestDto;
 import org.plotspark.plotsparkbackend.dto.story.StoryResponseDto;
+import org.plotspark.plotsparkbackend.entity.Genre;
 import org.plotspark.plotsparkbackend.entity.Story;
 import org.plotspark.plotsparkbackend.entity.User;
 import org.plotspark.plotsparkbackend.exception.ApiException;
+import org.plotspark.plotsparkbackend.repository.GenreRepository;
 import org.plotspark.plotsparkbackend.repository.StoryRepository;
 import org.plotspark.plotsparkbackend.repository.UserRepository;
 import org.plotspark.plotsparkbackend.service.StoryService;
@@ -26,6 +29,7 @@ public class StoryServiceImpl implements StoryService {
 
     private final StoryRepository storyRepository;
     private final UserRepository userRepository;
+    private final GenreRepository genreRepository;
     private static final Logger logger = LoggerFactory.getLogger(StoryServiceImpl.class);
 
     // createStory
@@ -121,6 +125,56 @@ public class StoryServiceImpl implements StoryService {
 
         storyRepository.delete(existingStory);
         logger.info("Story with id {} deleted", storyId);
+    }
+
+    // addGenreToStory
+    @Override
+    public void addGenreToStory(Long storyId, GenreIdRequestDto genreIdRequestDto) {
+        logger.info("Adding genre {} to story with id {}", genreIdRequestDto.getId(), storyId);
+
+        User currentUser = getCurrentUser();
+
+        // check for association to prevent loading of all genres for a story and returns
+        if (storyRepository.existsGenreAssociation(storyId, genreIdRequestDto.getId())) {
+            throw new ApiException(HttpStatus.CONFLICT, "Story already has this genre.");
+        }
+
+        Story story = storyRepository.findOneByIdAndUser_Id(storyId, currentUser.getId())
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Story not found."));
+
+        Genre genre = genreRepository.findById(genreIdRequestDto.getId())
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Genre not found."));
+
+        // will trigger lazy load because we used Set, we can use List but then Data Integrity will go down
+        story.getGenres().add(genre);
+        storyRepository.save(story);
+
+        logger.info("Genre {} added to story with id {}", genreIdRequestDto.getId(), storyId);
+    }
+
+    // removeGenreFromStory
+    @Override
+    public void removeGenreFromStory(Long storyId, Long genreId) {
+        logger.info("Removing genre {} from story with id {}", genreId, storyId);
+
+        User currentUser = getCurrentUser();
+        Story story = storyRepository.findOneByIdAndUser_Id(storyId, currentUser.getId())
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Story not found."));
+
+
+        Genre genreToRemove = story.getGenres().stream()
+                .filter(genre -> genre.getId().equals(genreId))
+                .findFirst()
+                .orElse(null);
+
+        if(genreToRemove == null) {
+            logger.info("Attempted to remove genre {} from story {} but association did not exist.", genreId, storyId);
+        }
+        else {
+            story.getGenres().remove(genreToRemove);
+            storyRepository.save(story);
+            logger.info("Genre {} removed from story with id {}", genreId, storyId);
+        }
     }
 
     // get the authenticated username and check if it exits in database

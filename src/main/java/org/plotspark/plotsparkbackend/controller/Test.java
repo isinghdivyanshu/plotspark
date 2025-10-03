@@ -45,7 +45,7 @@ public class Test {
         variables.put("subject", subject);
         variables.put("body", body);
 
-        emailService.sendHtmlMessage(
+        emailService.sendHtmlEmail(
                 recipientEmail,
                 subject,
                 "email-template",

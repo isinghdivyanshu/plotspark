@@ -8,4 +8,8 @@ public interface AuthService {
     void registerUser(RegisterRequestDto registerRequest);
 
     String loginUser(LoginRequestDto loginRequest);
+
+    void verifyUser(String verificationToken);
+
+    void resendVerificationEmail(String email);
 }

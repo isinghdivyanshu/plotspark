@@ -42,7 +42,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     @Async
-    public void sendHtmlMessage(String to, String subject, String templateName, Map<String, Object> variables) {
+    public void sendHtmlEmail(String to, String subject, String templateName, Map<String, Object> variables) {
         Context context = new Context();
         context.setVariables(variables);
 

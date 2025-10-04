@@ -1,29 +1,28 @@
 package org.plotspark.plotsparkbackend.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 @Entity
-@Table(name = "chapters")
-public class Chapter {
+@Table(name = "characters")
+public class Character {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    @Size(min = 3, max = 20)
-    private String title;
+    @Column(unique = true, nullable = false)
+    private String name;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;
+    @Basic(fetch = FetchType.LAZY)
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "story_id", nullable = false)

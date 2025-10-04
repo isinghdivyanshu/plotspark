@@ -31,9 +31,12 @@ public class Story {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // different values for cascade -> PERSIST|MERGE|REMOVE|REFRESH
+    // different values for cascade -> PERSIST|MERGE|REMOVE|REFRESH|ALL
     @OneToMany(mappedBy = "story", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Chapter> chapters = new ArrayList<>();
+
+    @OneToMany(mappedBy = "story", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Character> characters = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     // because it is a manyToMany relation we need a new joinTable

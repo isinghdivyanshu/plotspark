@@ -7,7 +7,6 @@ import org.plotspark.plotsparkbackend.dto.genre.GenreIdRequestDto;
 import org.plotspark.plotsparkbackend.dto.story.StoryRequestDto;
 import org.plotspark.plotsparkbackend.dto.story.StoryResponseDto;
 import org.plotspark.plotsparkbackend.dto.tag.TagIdRequestDto;
-import org.plotspark.plotsparkbackend.dto.tag.TagRequestDto;
 import org.plotspark.plotsparkbackend.service.GenreService;
 import org.plotspark.plotsparkbackend.service.StoryService;
 import org.springframework.data.domain.Pageable;

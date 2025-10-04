@@ -43,7 +43,7 @@ public class ChapterServiceImpl implements ChapterService {
         Story story = storyRepository.findOneByIdAndUser_Id(storyId, currentUser.getId())
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Story not found"));
 
-        if (chapterRepository.existsByTitleAndStory(chapterRequestDto.getTitle(), story)) {
+        if (chapterRepository.existsByTitleAndStoryId(chapterRequestDto.getTitle(), story.getId())) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Chapter already exists");
         }
 
@@ -113,10 +113,15 @@ public class ChapterServiceImpl implements ChapterService {
         User currentUser = getCurrentUser();
 
         Chapter chapter = chapterRepository.findOneByIdAndStoryIdAndStoryUserId(chapterId, storyId, currentUser.getId())
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Chapter not found"));
+                .orElse(null);
 
-        chapterRepository.delete(chapter);
-        logger.info("Deleted chapter by id {}", chapterId);
+        if (chapter != null) {
+            chapterRepository.delete(chapter);
+            logger.info("Deleted chapter by id {}", chapterId);
+        }
+        else {
+            logger.info("Attempted to delete chapter by id {} but chapter not found", chapterId);
+        }
     }
 
     // updateChapterById

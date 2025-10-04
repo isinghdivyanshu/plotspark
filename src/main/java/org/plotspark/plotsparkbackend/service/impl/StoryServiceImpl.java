@@ -125,10 +125,15 @@ public class StoryServiceImpl implements StoryService {
         User currentUser = getCurrentUser();
 
         Story existingStory = storyRepository.findOneByIdAndUser_Id(storyId, currentUser.getId())
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Story not found."));
+                .orElse(null);
 
-        storyRepository.delete(existingStory);
-        logger.info("Story with id {} deleted", storyId);
+        if (existingStory != null) {
+            storyRepository.delete(existingStory);
+            logger.info("Story with id {} deleted", storyId);
+        }
+        else {
+            logger.info("Attempted to delete story with id {} but not found", storyId);
+        }
     }
 
     // addGenreToStory
@@ -198,6 +203,7 @@ public class StoryServiceImpl implements StoryService {
         Tag tag = tagRepository.findById(tagIdRequestDto.getId())
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Tag not found."));
 
+        // will trigger lazy load because we used Set, we can use List but then Data Integrity will go down
         story.getTags().add(tag);
         storyRepository.save(story);
 

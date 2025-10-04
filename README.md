@@ -1,9 +1,6 @@
 <p align="center">
-  <a href="https://dscvit.com">
-    <img width="400" src="https://user-images.githubusercontent.com/56252312/159312411-58410727-3933-4224-b43e-4e9b627838a3.png#gh-light-mode-only" alt="GDSC VIT"/>
-  </a>
   <h2 align="center">Plotspark 🖋️</h2>
-  <h4 align="center">A visual hub for your entire project. Model anything from a product roadmap to a fictional universe.</h4>
+  <h4 align="center">Plotspark is a visual playground for writers, storytellers, and creators. Whether you're crafting the next great novel, developing a screenplay, or building a sprawling fictional universe for a game, Plotspark helps you bring your ideas to life. Our interactive timelines and character management tools are designed to help you visualize your narrative, track your plot points, and breathe life into your characters. Stop wrestling with scattered notes and confusing outlines. With Plotspark, you can finally focus on what you do best: telling great stories.</h4>
 </p>
 
 ---

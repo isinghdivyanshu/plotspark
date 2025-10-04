@@ -8,8 +8,6 @@
 
 ---
 
-[![Join Us](https://img.shields.io/badge/Join%20Us-Developer%20Student%20Clubs-red)](https://dsc.community.dev/vellore-institute-of-technology/)
-
 ## Features
 
 Frontend portal for Fan-Fiction Writer&apos;s Tool 🎉💡.
@@ -66,7 +64,3 @@ npm run dev
 		</td>
 	</tr>
 </table>
-
-<p align="center">
-	Made with ❤ by <a href="https://dscvit.com">GDSC VIT</a>
-</p>

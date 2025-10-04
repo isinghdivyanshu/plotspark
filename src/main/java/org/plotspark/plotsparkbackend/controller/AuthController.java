@@ -2,9 +2,7 @@ package org.plotspark.plotsparkbackend.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.plotspark.plotsparkbackend.dto.auth.JwtAuthResponseDto;
-import org.plotspark.plotsparkbackend.dto.auth.LoginRequestDto;
-import org.plotspark.plotsparkbackend.dto.auth.RegisterRequestDto;
+import org.plotspark.plotsparkbackend.dto.auth.*;
 import org.plotspark.plotsparkbackend.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,5 +47,21 @@ public class AuthController {
         authService.resendVerificationEmail(email);
 
         return ResponseEntity.ok("A new verification email has been sent");
+    }
+
+    // generate and send password reset token
+    @PostMapping("/reset-password-request")
+    public ResponseEntity<String>  resetPasswordRequest(@Valid @RequestBody PasswordResetRequestDto passwordResetRequestDto) {
+        authService.generateAndSendPasswordResetToken(passwordResetRequestDto);
+
+        return new ResponseEntity<>("Password reset link sent", HttpStatus.OK);
+    }
+
+    // verify token and reset password
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam String token, @Valid @RequestBody NewPasswordDto newPasswordDto) {
+        authService.verifyAndResetPassword(token, newPasswordDto);
+
+        return new ResponseEntity<>("Password reset successfully", HttpStatus.OK);
     }
 }

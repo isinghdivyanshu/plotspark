@@ -1,17 +1,21 @@
 package org.plotspark.plotsparkbackend.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.plotspark.plotsparkbackend.dto.auth.LoginRequestDto;
+import org.plotspark.plotsparkbackend.dto.auth.NewPasswordDto;
+import org.plotspark.plotsparkbackend.dto.auth.PasswordResetRequestDto;
 import org.plotspark.plotsparkbackend.dto.auth.RegisterRequestDto;
+import org.plotspark.plotsparkbackend.entity.PasswordResetToken;
 import org.plotspark.plotsparkbackend.entity.User;
 import org.plotspark.plotsparkbackend.exception.ApiException;
+import org.plotspark.plotsparkbackend.repository.PasswordResetTokenRepository;
 import org.plotspark.plotsparkbackend.repository.UserRepository;
 import org.plotspark.plotsparkbackend.security.JwtTokenProvider;
 import org.plotspark.plotsparkbackend.service.AuthService;
 import org.plotspark.plotsparkbackend.service.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,9 +24,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Base64;
 import java.util.UUID;
 
 @Service
@@ -33,10 +39,8 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final EmailService emailService;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
     private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
-
-    @Value("${app.frontend-base-url}")
-    String frontendBaseUrl;
 
     // registerUser
     @Override
@@ -62,7 +66,8 @@ public class AuthServiceImpl implements AuthService {
         newUser.setVerified(false);
         // generate random token
         String verificationToken = UUID.randomUUID().toString();
-        newUser.setVerificationToken(verificationToken);
+        String hashToken = getHashedToken(verificationToken);
+        newUser.setVerificationToken(hashToken);
         // set expiry to 30 min from current time
         newUser.setTokenExpiration(LocalDateTime.now().plusMinutes(30));
 
@@ -73,7 +78,7 @@ public class AuthServiceImpl implements AuthService {
         logger.info("Sending verification email to: {}", newUser.getEmail());
 
         // send verification mail just after registration
-        sendVerificationEmail(verificationToken, newUser.getEmail(), newUser.getUsername());
+        emailService.sendVerificationEmail(verificationToken, newUser.getEmail(), newUser.getUsername());
 
         logger.info("Verification email sent to: {}", newUser.getEmail());
     }
@@ -102,7 +107,9 @@ public class AuthServiceImpl implements AuthService {
     public void verifyUser(String verificationToken) {
         logger.error("Verifying user {}", verificationToken);
 
-        User user = userRepository.findOneByVerificationToken(verificationToken)
+        String hashedToken = getHashedToken(verificationToken);
+
+        User user = userRepository.findOneByVerificationToken(hashedToken)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Invalid verification token"));
 
         if (user.getTokenExpiration().isBefore(LocalDateTime.now())) {
@@ -131,28 +138,85 @@ public class AuthServiceImpl implements AuthService {
 
         // generate new token and new expiry and save
         String verificationToken = UUID.randomUUID().toString();
-        user.setVerificationToken(verificationToken);
+        String hashedToken = getHashedToken(verificationToken);
+        user.setVerificationToken(hashedToken);
         user.setTokenExpiration(LocalDateTime.now().plusMinutes(30));
         userRepository.save(user);
 
         // resend new token
-        sendVerificationEmail(verificationToken, user.getEmail(), user.getUsername());
+        emailService.sendVerificationEmail(verificationToken, user.getEmail(), user.getUsername());
 
         logger.info("Resent verification email to {}", email);
     }
 
-    private void sendVerificationEmail(String verificationToken, String email, String username) {
-        String verificationUrl = frontendBaseUrl + "/verify-email?verificationToken=" +  verificationToken;
+    // generate a password reset token and mail to user
+    @Override
+    @Transactional
+    public void generateAndSendPasswordResetToken(PasswordResetRequestDto passwordResetRequestDto) {
+        logger.info("Generating password reset token for user {}", passwordResetRequestDto.getEmail());
 
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("username", username);
-        variables.put("verificationUrl", verificationUrl);
+        userRepository.findByEmail(passwordResetRequestDto.getEmail())
+                .ifPresent(user -> {
+                    passwordResetTokenRepository.deleteByUser(user);
+                    logger.info("Invalidated existing tokens for user {}", user.getEmail());
 
-        emailService.sendHtmlEmail(
-                email,
-                "Welcome to Plotspark! Please Verify Your Account",
-                "verification",
-                variables
-        );
+                    passwordResetTokenRepository.deleteByUser(user);
+
+                    String rawToken = UUID.randomUUID().toString();
+                    String hashedToken = getHashedToken(rawToken);
+
+                    PasswordResetToken passwordResetToken = new PasswordResetToken();
+                    passwordResetToken.setToken(hashedToken);
+                    passwordResetToken.setExpiryTimeStamp(LocalDateTime.now().plusMinutes(30));
+                    passwordResetToken.setUser(user);
+                    passwordResetTokenRepository.save(passwordResetToken);
+                    logger.info("New password reset token generated for user {}", user.getEmail());
+
+                    emailService.sendPasswordResetEmail(rawToken, user.getEmail(), user.getUsername());
+                    logger.info("Password reset email sent to {}", user.getEmail());
+                });
+    }
+
+    // verify token and update password
+    @Override
+    @Transactional
+    public void verifyAndResetPassword(String token, NewPasswordDto newPasswordDto) {
+        logger.info("Resetting password");
+
+        if(!newPasswordDto.getNewPassword().equals(newPasswordDto.getConfirmNewPassword())) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Passwords do not match");
+        }
+
+        String hashedToken = getHashedToken(token);
+
+        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(hashedToken)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Invalid token"));
+
+        if(passwordResetToken.getExpiryTimeStamp().isBefore(LocalDateTime.now())) {
+            passwordResetTokenRepository.delete(passwordResetToken);
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Password reset link expired, request new link");
+        }
+
+        User user = passwordResetToken.getUser();
+        user.setPassword(passwordEncoder.encode(newPasswordDto.getNewPassword()));
+        userRepository.save(user);
+        passwordResetTokenRepository.delete(passwordResetToken);
+        logger.info("Password reset complete for user {}", user.getUsername());
+
+        logger.info("Sending confirmation email to: {}", user.getEmail());
+        emailService.sendPasswordResetConfirmationEmail(user.getEmail(), user.getUsername());
+        logger.info("Confirmation email sent to {}", user.getEmail());
+    }
+
+    private String getHashedToken(String token) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(token.getBytes(StandardCharsets.UTF_8));
+
+            return Base64.getEncoder().withoutPadding().encodeToString(hash);
+        }
+        catch(NoSuchAlgorithmException e) {
+            throw new RuntimeException("Could not hash token", e);
+        }
     }
 }

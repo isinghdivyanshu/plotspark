@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Include Spring Boot's default logging configurations -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- Pattern for framework logs (less prominent) -->
+    <property name="FRAMEWORK_LOG_PATTERN"
+              value="%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(---){faint} %clr([%15.15t]){faint} %clr(%-30.30logger{29}){faint} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+
+    <!-- Pattern for application's logs (more prominent with >>) -->
+    <property name="APP_LOG_PATTERN"
+              value="%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(---){faint} %clr([%15.15t]){faint} %clr(>>){green} %clr(%-30.30logger{29}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+
+    <!-- Appender for framework logs in dev -->
+    <appender name="DEV_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${FRAMEWORK_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <!-- Appender for application's logs in dev -->
+    <appender name="APP_DEV_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${APP_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender for structured JSON console logs (for production) -->
+    <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>{"service_name":"plotspark-backend"}</customFields>
+        </encoder>
+    </appender>
+
+    <!-- Spring Profile for Development (dev) -->
+    <springProfile name="dev">
+        <!--
+           This logger handles ONLY application's code.
+           It uses the prominent APP_LOG_PATTERN.
+        -->
+        <logger name="org.plotspark.plotsparkbackend" level="INFO" additivity="false">
+            <appender-ref ref="APP_DEV_CONSOLE"/>
+        </logger>
+
+        <!-- The root logger now handling OTHER logs (like Spring, Hibernate) -->
+        <root level="WARN">
+            <appender-ref ref="DEV_CONSOLE"/>
+        </root>
+
+        <!-- You can still set specific levels for noisy loggers if needed -->
+        <logger name="org.hibernate.SQL" level="DEBUG"/>
+
+    </springProfile>
+
+    <!-- Spring Profile for Production (prod) -->
+    <springProfile name="prod">
+        <root level="INFO">
+            <appender-ref ref="JSON_CONSOLE"/>
+        </root>
+    </springProfile>
+
+</configuration>
+

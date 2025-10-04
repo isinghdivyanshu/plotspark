@@ -20,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -60,8 +59,6 @@ public class ChapterServiceImpl implements ChapterService {
 
     // get all chapters for a story by storyId
     @Override
-    @Transactional(readOnly = true) // even though we are not fetching any lazy column, Page might interfere sometimes
-    // @Transactional considers the whole method as single unit and rolls back if any error happen
     public PagedResponseDto<ChapterSummaryDto> getAllChaptersByStoryId(Long storyId, Pageable pageable) {
         logger.info("Retrieving chapters by story id {}", storyId);
 
@@ -91,13 +88,12 @@ public class ChapterServiceImpl implements ChapterService {
 
     // getChapterById
     @Override
-    @Transactional(readOnly = true) // because content is @Lob and fetched lazily, this keeps db session open
     public ChapterDetailDto getChapterById(Long chapterId, Long storyId) {
         logger.info("Retrieving chapter by id {}", chapterId);
 
         User currentUser = getCurrentUser();
 
-        Chapter chapter = chapterRepository.findOneByIdAndStoryIdAndStoryUserId(chapterId, storyId, currentUser.getId())
+        Chapter chapter = chapterRepository.findOneWithDescriptionByIdAndStoryIdAndStoryUserId(chapterId, storyId, currentUser.getId())
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Chapter not found"));
 
         logger.info("Retrieved chapter by id {}", chapterId);
@@ -106,7 +102,6 @@ public class ChapterServiceImpl implements ChapterService {
 
     // deleteChapterById
     @Override
-    @Transactional // don't know why unable to access lob stream error is happening
     public void deleteChapterById(Long chapterId, Long storyId) {
         logger.info("Deleting chapter by id {}", chapterId);
 
@@ -126,7 +121,6 @@ public class ChapterServiceImpl implements ChapterService {
 
     // updateChapterById
     @Override
-    @Transactional
     public ChapterSummaryDto updateChapterById(Long chapterId, Long storyId, ChapterRequestDto chapterRequestDto) {
         logger.info("Updating chapter by id {}", chapterId);
 

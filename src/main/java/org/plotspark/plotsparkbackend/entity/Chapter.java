@@ -22,6 +22,7 @@ public class Chapter {
     @Size(min = 3, max = 20)
     private String title;
 
+    @Basic(fetch = FetchType.LAZY)
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
